@@ -1,10 +1,3 @@
-//
-//  FormCraftDecimalValidation.swift
-//  FormCraft
-//
-//  Created by Артем Дробышев on 14.04.2025.
-//
-
 import Foundation
 
 public extension FormCraftValidationRules {

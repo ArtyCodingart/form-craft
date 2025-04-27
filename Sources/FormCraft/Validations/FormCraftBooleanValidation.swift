@@ -1,10 +1,3 @@
-//
-//  FormCraftBooleanValidation.swift
-//  FormCraft
-//
-//  Created by Артем Дробышев on 24.02.2025.
-//
-
 public extension FormCraftValidationRules {
     func boolean() -> FormCraftBooleanValidation {
         .init()

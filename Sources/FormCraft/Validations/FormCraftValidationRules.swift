@@ -1,10 +1,3 @@
-//
-//  FormCraftValidationRules.swift
-//  FormCraft
-//
-//  Created by Артем Дробышев on 21.02.2025.
-//
-
 public protocol FormCraftValidationTypeRules {
     associatedtype Value: Sendable
 

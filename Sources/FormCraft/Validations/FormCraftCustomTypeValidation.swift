@@ -1,10 +1,3 @@
-//
-//  FormCraftStructValidation.swift
-//  FormCraft
-//
-//  Created by Артем Дробышев on 22.04.2025.
-//
-
 public extension FormCraftValidationRules {
     func customType<CustomType>() -> FormCraftCustomTypeValidation<CustomType> {
         .init()

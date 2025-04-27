@@ -1,10 +1,3 @@
-//
-//  FormCraftValidationOptional.swift
-//  FormCraft
-//
-//  Created by Артем Дробышев on 27.03.2025.
-//
-
 public extension FormCraftValidationTypeRules {
     func optional() -> OptionalValidator<Self> {
         .init(base: self)

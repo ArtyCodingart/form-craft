@@ -1,10 +1,3 @@
-//
-//  FormCraftControllerView.swift
-//  form-craft
-//
-//  Created by Артем Дробышев on 27.04.2025.
-//
-
 import SwiftUI
 
 private class FormCraftControllerVM: ObservableObject {

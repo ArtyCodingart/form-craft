@@ -1,10 +1,3 @@
-//
-//  FormCraftStringValidation.swift
-//  FormCraft
-//
-//  Created by Артем Дробышев on 20.02.2025.
-//
-
 import Foundation
 
 public extension FormCraftValidationRules {

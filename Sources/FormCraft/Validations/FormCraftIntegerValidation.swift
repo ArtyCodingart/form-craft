@@ -1,10 +1,3 @@
-//
-//  FormCraftIntegerValidation.swift
-//  FormCraft
-//
-//  Created by Артем Дробышев on 27.03.2025.
-//
-
 import Foundation
 
 public extension FormCraftValidationRules {
