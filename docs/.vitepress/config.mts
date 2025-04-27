@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  base: '/docs/',
+  base: '/docs/docs/',
   title: "Form Craft",
   description: "Build better forms with a simple and flexible validation library for Swift and SwiftUI",
   themeConfig: {
