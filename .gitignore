@@ -8,4 +8,5 @@ DerivedData/
 .netrc
 docs/docs
 docs/.vitepress/dist
+docs/.vitepress/cache
 docs/node_modules
