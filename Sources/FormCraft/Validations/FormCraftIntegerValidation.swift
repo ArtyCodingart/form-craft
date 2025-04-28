@@ -9,9 +9,7 @@ public extension FormCraftValidationRules {
 public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
     public var rules: [(_ value: Int) -> FormCraftValidationResponse<Int>] = []
 
-    /**
-     * Add validation check that value strictly greater than `num`
-     */
+    /// Add validation check that value strictly greater than `num`
     public func gt(
         num: Int,
         message: String = "Value must be greater than %@"
@@ -30,9 +28,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
-    /**
-     * Add validation check that value greater than or equal to `num`
-     */
+    /// Add validation check that value greater than or equal to `num`
     public func gte(
         num: Int,
         message: String = "Value must be at least %@"
@@ -51,9 +47,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
-    /**
-     * Add validation check that value strictly less than `num`
-     */
+    /// Add validation check that value strictly less than `num`
     public func lt(
         num: Int,
         message: String = "Value must be less than %@"
@@ -71,9 +65,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
-    /**
-     * Add validation check that value less than or equal to `num`
-     */
+    /// Add validation check that value less than or equal to `num`
     public func lte(
         num: Int,
         message: String = "Value must not be more than %@"
@@ -91,46 +83,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
-    @available(*, deprecated)
-    public func min(
-        min: Int,
-        message: String = "Value must be at least %@"
-    ) -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
-            if value < min {
-                return .error(message: String(format: message, "\(min)"))
-            }
-
-            return .success(value: value)
-        }
-
-
-        return copySelf
-    }
-
-    @available(*, deprecated)
-    public func max(
-        max: Int,
-        message: String = "Value must not be more than %@"
-    ) -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
-            if value > max {
-                return .error(message: String(format: message, "\(max)"))
-            }
-
-            return .success(value: value)
-        }
-
-        return copySelf
-    }
-
-    /**
-     * Add validation check that value is positive
-     */
+    /// Add validation check that value is positive
     public func isPositive(
         message: String = "Value must be positive"
     ) -> Self {
@@ -147,9 +100,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
-    /**
-     * Add validation check that value is positive or zero
-     */
+    /// Add validation check that value is positive or zero
     public func isNonNegative(
         message: String = "Value must not be negative"
     ) -> Self {
@@ -166,9 +117,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
-    /**
-     * Add validation check that value is negative
-     */
+    /// Add validation check that value is negative
     public func isNegative(
         message: String = "Value must be negative"
     ) -> Self {
@@ -185,9 +134,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
-    /**
-     * Add validation check that value is negative or zero
-     */
+    /// Add validation check that value is negative or zero
     public func isNonPositive(
         message: String = "Value must not be positive"
     ) -> Self {
@@ -204,9 +151,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
-    /**
-     * Add validation check that value is evenly divisible by `num`
-     */
+    /// Add validation check that value is evenly divisible by `num`
     public func multipleOf(
         num: Int,
         message: String = "Value must be a multiple of %@"
