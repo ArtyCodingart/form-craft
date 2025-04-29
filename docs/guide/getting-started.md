@@ -253,6 +253,5 @@ struct LoginFormView: View {
 
 ## What's Next?
 
-- Explore list of available [validation rules](/api-ref/validation-rules)
+- Explore list of available [validation rules](/validation-rules)
 - Check our [examples](/guide/examples)
-- Dive into [API Reference](/api-ref)
