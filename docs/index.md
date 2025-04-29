@@ -4,22 +4,21 @@ layout: home
 
 hero:
   name: "Form Craft"
-  text: "Build better forms with a simple and flexible validation library for Swift and SwiftUI"
-  tagline: My great project tagline
+  # text: ""
+  tagline: "Build better forms with a simple and flexible validation library for Swift and SwiftUI"
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: Getting Started
+      link: /guide/getting-started
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: Validation Rules
+      link: /validation-rules
 
 features:
-  - title: Feature A
+  - icon: 🔀
+    title: Async Validation
     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - icon: 🔨
+    title: Extendable validation rules
+    details: Write your own, custom validation rules
 ---
-
