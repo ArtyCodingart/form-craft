@@ -205,7 +205,7 @@ struct LoginFormView: View {
   private func handleLogin(
     fields: FormCraftValidatedFields<LoginFormFields>
   ) async {
-    await sendRequstToServer(variables: LoginRequest(
+    await sendRequestToServer(variables: LoginRequest(
       username: fields.getValue(key: \.login),
       password: fields.getValue(key: \.password)
     ))
@@ -240,7 +240,7 @@ struct LoginFormView: View {
 
     YourButton(
       label: "Login",
-      loading: loginForm.formState.isSubmiting,
+      loading: loginForm.formState.isSubmitting,
       action: {
         loginForm.handleSubmit(onSuccess: handleLogin)
       }
@@ -248,10 +248,3 @@ struct LoginFormView: View {
   }
 }
 ```
-
-:::
-
-## What's Next?
-
-- Explore list of available [validation rules](/validation-rules)
-- Check our [examples](/guide/examples)
