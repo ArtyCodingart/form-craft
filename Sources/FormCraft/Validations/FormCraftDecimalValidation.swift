@@ -7,7 +7,7 @@ public extension FormCraftValidationRules {
 }
 
 public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
-    public var rules: [(_ value: Decimal) -> FormCraftValidationResponse<Decimal>] = []
+    public var rules: [(_ value: Decimal) async -> FormCraftValidationResponse<Decimal>] = []
 
     /// Add validation check that value strictly greater than `num`
     public func gt(
@@ -159,9 +159,9 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
         var copySelf = self
 
         copySelf.rules.append { value in
-            if num == 0 || value % num != 0 {
-                return .error(message: String(format: message, "\(num)"))
-            }
+//            if num == 0 || value % num != 0 {
+//                return .error(message: String(format: message, "\(num)"))
+//            }
 
             return .success(value: value)
         }

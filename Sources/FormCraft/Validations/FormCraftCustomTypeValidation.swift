@@ -5,5 +5,5 @@ public extension FormCraftValidationRules {
 }
 
 public struct FormCraftCustomTypeValidation<CustomType: Sendable>: FormCraftValidationTypeRules {
-    public var rules: [(_ value: CustomType) -> FormCraftValidationResponse<CustomType>] = []
+    public var rules: [(_ value: CustomType) async -> FormCraftValidationResponse<CustomType>] = []
 }

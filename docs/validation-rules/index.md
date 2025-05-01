@@ -1,88 +1,170 @@
 # Validation Rules
 
-## Booleans
+## Example usage
 
-- `isTrue(message: String = "Value required")` - Validates that boolean value is `true`
+FormCraft includes a wide set of built-in validation rules out of the box.  
+You can also define your own custom rules when needed.
 
-::: details Example
+FormCraft provides the `FormCraftValidationRules` structure that contains built-in rule types like `.string`, `.integer`, `.boolean`, and many others.
+
 ```swift
-FormCraftValidationRules()
-  .boolean()
-  .isTrue() // [!code highlight]
-  .validate(false)
-```
-:::
-
-## Strings
-
-- `isNotEmpty(message: String = "Value required")`
-- `email(message: String = "Value must be a valid email")`
-- `phoneNumber(message: String = "Value must be a valid phone number")`
-- `equalTo(to: String, message: String = "Values ​​do not match")`
-- `minLength(min: Int, message: String = "Value must be at least %@ characters")`
-- `maxLength(max: Int, message: String = "Value must not be more than %@")`
-
-::: details Example
-```swift
-FormCraftValidationRules()
+await FormCraftValidationRules()
   .string()
-  .isNotEmpty() // [!code highlight]
-  .email() // [!code highlight]
-  .validate(false)
+  .isNotEmpty()
+  .email()
+  .optional()
+  .validate(value: "test@gmail.com")
 ```
+
+::: info RULE EXECUTION ORDER
+Validation rules are executed from top to bottom, with one exception — `.optional()`.  
+In this example, the execution order will be: `.optional()` → `.string()` → `.isNotEmpty()` → `.email()`.
+
+The `.optional()` method is special because it transforms the value into an `Optional`.  
+This method always runs first to avoid unnecessary validations — if the value is `nil`, the rest of the rules are skipped.
+
+Also, if any rule fails, the remaining rules are not executed.  
+Each rule can modify the value as it goes. For example, `.string().trim().trimmed()` can remove spaces before passing it further.
 :::
 
-## Integers
+## The `.validate(value: Any?)` and `.validate(raw: Value)` methods
 
-- `gt(num: Int, message: String = "Value must be greater than %@")`
-- `gte(num: Int, message: String = "Value must be at least %@")`
-- `lt(num: Int, message: String = "Value must be less than %@")`
-- `lte(num: Int, message: String = "Value must not be more than %@")`
-- `isNonNegative(message: String = "Value must not be negative")`
-- `isNegative(message: String = "Value must be negative")`
-- `isNonPositive(message: String = "Value must not be positive")`
-- `multipleOf(num: Int,message: String = "Value must be a multiple of %@")`
+All validation rules provide two method signatures:
 
-::: details Example
 ```swift
-FormCraftValidationRules()
-  .integer()
-  .isNonNegative() // [!code highlight]
-  .multipleOf(5) // [!code highlight]
-  .validate(nil)
+func validate(raw: Any?) async -> FormCraftValidationResponse<Value>
+func validate(value: Value) async -> FormCraftValidationResponse<Value>
 ```
+
+The generic type `Value` is inferred based on the rule you're using.  
+For example, `.string()` gives `String`, `.integer()` gives `Int`, etc.
+
+If you don’t know the exact type at runtime or want to cast dynamically, use the `raw: Any?` version.
+
+The `validate` method returns a `FormCraftValidationResponse<Value>` enum:
+- `.success(value: Value)` — validation passed  
+- `.error(message: String)` — validation failed
+
+::: info
+The `validate` method is asynchronous.
 :::
 
-## Decimals
+## Extending with custom rules
 
-- `gt(num: Decimal, message: String = "Value must be greater than %@")`
-- `gte(num: Decimal, message: String = "Value must be at least %@")`
-- `lt(num: Decimal, message: String = "Value must be less than %@")`
-- `lte(num: Decimal, message: String = "Value must not be more than %@")`
-- `isNonNegative(message: String = "Value must not be negative")`
-- `isNegative(message: String = "Value must be negative")`
-- `isNonPositive(message: String = "Value must not be positive")`
-- `multipleOf(num: Decimal,message: String = "Value must be a multiple of %@")`
+Most real-world projects need custom validation logic.  
+You can extend existing rule types or create entirely new ones.
 
-::: details Example
+### Adding a custom rule to an existing type (e.g., `.string`)
+
+Let’s say you want to check if an email already exists in your backend.  
+Since email is a string, we can extend the `.string()` validator:
+
 ```swift
-FormCraftValidationRules()
-  .decimal()
-  .isNonNegative() // [!code highlight]
-  .multipleOf(5) // [!code highlight]
-  .validate(nil)
+extension FormCraftStringValidation {
+  func checkDuplicateEmail(message: String = "Email already exists") -> Self {
+    var copySelf = self
+
+    copySelf.rules.append { value in
+      let isFreeEmail = await self.checkDuplicateEmailServer(email: value)
+
+      if (!isFreeEmail) {
+        return .error(message: message)
+      }
+
+      return .success(value: value)
+    }
+
+    return copySelf
+  }
+
+  private func checkDuplicateEmailServer(email: String) async -> Bool {
+      // Call your backend
+      return true
+  }
+}
 ```
-:::
 
-## Optionals
+You can now use this custom rule just like any built-in one:
 
-- `optional()`
-
-::: details Example
 ```swift
-FormCraftValidationRules()
-  .boolean()
-  .optional() // [!code highlight]
-  .validate(nil)
+let result = await FormCraftValidationRules()
+  .string()
+  .isNotEmpty()
+  .email()
+  .checkDuplicateEmail()
+  .optional()
+  .validate(value: "test@gmail.com")
+
+switch result {
+case .error(let errorMessage):
+  print(errorMessage)
+case .success(let value):
+  print(value)
+}
 ```
-:::
+
+This also demonstrates the benefit of sequential validation:  
+If the `.email()` rule fails, the `.checkDuplicateEmail()` rule won’t run — saving you from an unnecessary API call.
+
+### Adding a new custom type with rules
+
+You can define completely new rule types for complex data.  
+For example, let’s say you want to validate a `User` struct:
+
+```swift
+struct User {
+  let firstName: String
+  let lastName: String
+  let age: Int
+}
+
+extension FormCraftValidationRules {
+  func userValidation() -> UserValidation {
+    .init()
+  }
+}
+
+struct UserValidation: FormCraftValidationTypeRules {
+  var rules: [(_ value: User) async -> FormCraftValidationResponse<User>] = []
+
+  func checkAge(message: String = "You must be over 21") async -> Self {
+    var copySelf = self
+
+    copySelf.rules.append { value in
+      if (value.age < 21) {
+          return .error(message: message)
+      }
+
+      return .success(value: value)
+    }
+
+    return copySelf
+  }
+
+  func checkFirstName(message: String = "First name must be longer than 6 characters.") async -> Self {
+    var copySelf = self
+
+    copySelf.rules.append { value in
+      if (value.firstName.count < 6) {
+        return .error(message: message)
+      }
+
+      return .success(value: value)
+    }
+
+    return copySelf
+  }
+
+  // Other rules...
+}
+```
+
+Now you can use your custom validator like this:
+
+```swift
+await FormCraftValidationRules()
+  .userValidation()
+  .checkAge()
+  .checkFirstName()
+  .validate(value: user)
+```

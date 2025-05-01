@@ -1,13 +1,13 @@
 public protocol FormCraftValidationTypeRules {
     associatedtype Value: Sendable
 
-    var rules: [(_ value: Value) -> FormCraftValidationResponse<Value>] { get set }
+    var rules: [(_ value: Value) async -> FormCraftValidationResponse<Value>] { get set }
 
-    func validate(value: Value) -> FormCraftValidationResponse<Value>
+    func validate(value: Value) async -> FormCraftValidationResponse<Value>
 }
 
 public extension FormCraftValidationTypeRules {
-    func validate(raw: Any?) -> FormCraftValidationResponse<Value> {
+    func validate(raw: Any?) async -> FormCraftValidationResponse<Value> {
         guard let typed = raw as? Value else {
             if raw == nil {
                 return .error(message: "Value required")
@@ -18,14 +18,14 @@ public extension FormCraftValidationTypeRules {
             )
         }
 
-        return validate(value: typed)
+        return await validate(value: typed)
     }
 
-    func validate(value: Value) -> FormCraftValidationResponse<Value> {
+    func validate(value: Value) async -> FormCraftValidationResponse<Value> {
         var modifyValue = value
 
         for rule in rules {
-            let validated = rule(modifyValue)
+            let validated = await rule(modifyValue)
 
             switch validated {
             case .success(let successValue):

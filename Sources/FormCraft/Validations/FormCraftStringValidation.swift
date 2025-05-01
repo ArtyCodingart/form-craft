@@ -7,7 +7,7 @@ public extension FormCraftValidationRules {
 }
 
 public struct FormCraftStringValidation: FormCraftValidationTypeRules {
-    public var rules: [(_ value: String) -> FormCraftValidationResponse<String>] = []
+    public var rules: [(_ value: String) async -> FormCraftValidationResponse<String>] = []
 
     public func isNotEmpty(message: String = "Value required") -> Self {
         var copySelf = self

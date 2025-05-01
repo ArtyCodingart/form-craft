@@ -7,13 +7,13 @@ public extension FormCraftValidationTypeRules {
 public struct OptionalValidator<Base: FormCraftValidationTypeRules>: FormCraftValidationTypeRules {
     public typealias Value = Base.Value?
 
-    public var rules: [(Value) -> FormCraftValidationResponse<Value>] = []
+    public var rules: [(Value) async -> FormCraftValidationResponse<Value>] = []
 
     public let base: Base
 
-    public func validate(value: Value) -> FormCraftValidationResponse<Value> {
+    public func validate(value: Value) async -> FormCraftValidationResponse<Value> {
         if let value {
-            let result = base.validate(value: value)
+            let result = await base.validate(value: value)
 
             switch result {
             case .success(let value):

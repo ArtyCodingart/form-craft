@@ -21,9 +21,9 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'API', link: '/api' },
-      { text: 'Validation Rules', link: '/validation-rules' },
-      { text: 'Examples', link: '/examples' }
+      { text: 'API', link: '/api/' },
+      { text: 'Validation Rules', link: '/validation-rules/' },
+      { text: 'Examples', link: '/examples/' }
     ],
 
     sidebar: [
@@ -42,13 +42,14 @@ export default defineConfig({
       },
       { 
         text: 'Validation Rules',
+        link: '/validation-rules/',
         items: [
-          { text: 'String', link: '/' },
-          { text: 'Boolean', link: '/'},
-          { text: 'Integer', link: '/' },
-          { text: 'Decimal', link: '/' },
-          { text: 'Array', link: '/' },
-          { text: 'Custom Type', link: '/'}
+          { text: 'String', link: '/validation-rules/string' },
+          { text: 'Boolean', link: '/validation-rules/boolean'},
+          { text: 'Integer', link: '/validation-rules/integer' },
+          { text: 'Decimal', link: '/validation-rules/decimal' },
+          { text: 'Array', link: '/validation-rules/array' },
+          { text: 'Custom Type', link: '/validation-rules/custom-type'}
         ]
       },
       {

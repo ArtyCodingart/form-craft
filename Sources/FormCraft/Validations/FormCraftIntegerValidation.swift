@@ -7,7 +7,7 @@ public extension FormCraftValidationRules {
 }
 
 public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
-    public var rules: [(_ value: Int) -> FormCraftValidationResponse<Int>] = []
+    public var rules: [(_ value: Int) async -> FormCraftValidationResponse<Int>] = []
 
     /// Add validation check that value strictly greater than `num`
     public func gt(
