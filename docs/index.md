@@ -8,7 +8,7 @@ hero:
   actions:
     - theme: brand
       text: Getting Started
-      link: /guide/getting-started
+      link: /getting-started
     - theme: alt
       text: GitHub
       link: https://github.com/ArtyCodingart/form-craft
