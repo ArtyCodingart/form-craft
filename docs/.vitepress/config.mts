@@ -40,7 +40,7 @@ export default defineConfig({
           { text: 'FormCraftProviderView', link: '/' },
         ]
       },
-      { 
+      {
         text: 'Validation Rules',
         link: '/validation-rules/',
         items: [
@@ -58,7 +58,8 @@ export default defineConfig({
           { text: 'Basic Form', link: '/' },
           { text: 'Async Validation', link: '/' },
           { text: 'Cross-Field Validation', link: '/' },
-          { text: 'Handle Server Errors', link: '/'}
+          { text: 'Handle Server Errors', link: '/'},
+          { text: 'Contextual Validation', link: '/contextual-validation'},
         ]
       }
     ],
