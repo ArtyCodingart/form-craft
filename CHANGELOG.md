@@ -26,9 +26,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Decimal validator: `isNegative` rule
 - Decimal validator: `isNonPositive` rule
 - Decimal validator: `multipleOf` rule
+- String validator: `trimmed` rule
 
 ### Removed
 - Int validator: `min` rule
 - Int validator: `max` rule
 - Decimal validator: `min` rule
 - Decimal validator: `max` rule
+
+### Changed
+- String validator: renamed rule `isNotEmpty` -> `notEmpty`

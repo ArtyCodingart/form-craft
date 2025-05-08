@@ -9,11 +9,28 @@ public extension FormCraftValidationRules {
 public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     public var rules: [(_ value: String) async -> FormCraftValidationResponse<String>] = []
 
-    public func isNotEmpty(message: String = "Value required") -> Self {
+    public func notEmpty(message: String = "Value required") -> Self {
         var copySelf = self
 
         copySelf.rules.append { value in
             if value.isEmpty {
+                return .error(message: message)
+            }
+
+            return .success(value: value)
+        }
+
+        return copySelf
+    }
+
+    public func trimmed(message: String = "Value must not start or end with empty characters") -> Self {
+        var copySelf = self
+
+        copySelf.rules.append { value in
+            let pattern = /^\S.*\S$/
+            let isTrimmed = try? pattern.wholeMatch(in: value) != nil
+
+            guard !isTrimmed else {
                 return .error(message: message)
             }
 
