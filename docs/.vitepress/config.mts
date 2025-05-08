@@ -71,6 +71,10 @@ export default defineConfig({
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/ArtyCodingart/form-craft' }
-    ]
+    ],
+
+    search: {
+      provider: 'local'
+    }
   }
 })
