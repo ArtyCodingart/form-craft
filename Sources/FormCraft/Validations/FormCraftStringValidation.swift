@@ -9,6 +9,7 @@ public extension FormCraftValidationRules {
 public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     public var rules: [(_ value: String) async -> FormCraftValidationResponse<String>] = []
 
+    /// Add validation check that value is not empty
     public func notEmpty(message: String = "Value required") -> Self {
         var copySelf = self
 
@@ -23,6 +24,8 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
+    /// Add validation check that value does not contains whitespace characters on start/end
+    /// https://en.wikipedia.org/wiki/Whitespace_character
     public func trimmed(message: String = "Value must not start or end with empty characters") -> Self {
         var copySelf = self
 
@@ -40,6 +43,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
+    /// Add validation check that value is valid email address
     public func email(message: String = "Value must be a valid email") -> Self {
         var copySelf = self
 
@@ -60,6 +64,8 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
+    /// Add validation check that value is valid E.164 phone number
+    /// https://en.wikipedia.org/wiki/E.164
     public func phoneNumber(message: String = "Value must be a valid phone number") -> Self {
         var copySelf = self
 
@@ -77,6 +83,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
+    /// Add validation check that user input value is equals to provided value
     public func equals(to: String, message: String = "Values do not match") -> Self {
         var copySelf = self
 
@@ -91,6 +98,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
+    /// Add validation check that value is at least `min` characters length
     public func minLength(
         min: Int,
         message: String = "Value must be at least %@ characters"
@@ -108,6 +116,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
+    /// Add validation check that value is at most `max` characters length
     public func maxLength(
         max: Int,
         message: String = "Value must not be more than %@"
