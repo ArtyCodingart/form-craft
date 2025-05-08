@@ -36,3 +36,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - String validator: renamed rule `isNotEmpty` -> `notEmpty`
+- String validator: renamed rule `equalTo` -> `equals`

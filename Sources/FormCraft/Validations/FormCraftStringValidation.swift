@@ -77,7 +77,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
-    public func equalTo(to: String, message: String = "Values ​​do not match") -> Self {
+    public func equals(to: String, message: String = "Values do not match") -> Self {
         var copySelf = self
 
         copySelf.rules.append { value in
