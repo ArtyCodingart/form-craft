@@ -1,5 +1,11 @@
 # Form Craft
 
+![GitHub Release](https://img.shields.io/github/v/release/ArtyCodingart/form-craft?color=%239a60fe)
+![Static Badge](https://img.shields.io/badge/iOS-15%2B-test?logo=apple)
+![GitHub License](https://img.shields.io/github/license/ArtyCodingart/form-craft)
+[![DOCS](https://img.shields.io/badge/DOCS-8A2BE2)](https://artycodingart.github.io/form-craft/)
+
+
 Build better forms with a simple and flexible validation library for Swift and SwiftUI
 
 ## Key Features
@@ -24,7 +30,7 @@ private struct LoginFormFields: FormCraftFields {
       .email()
       .validate(value: value)
   }
-  
+
   var password = FormCraftField(name: "password", value: "") { value in
     FormCraftValidationRules()
       .string()
@@ -48,7 +54,7 @@ struct LoginFormView: View {
   var body: some View {
     FormCraft(formConfig: loginForm) {
       FormCraftControllerView(
-        formConfig: loginForm, 
+        formConfig: loginForm,
         key: \.login
       ) { field in
         YourTextField(
@@ -60,7 +66,7 @@ struct LoginFormView: View {
       }
 
       FormCraftControllerView(
-        formConfig: loginForm, 
+        formConfig: loginForm,
         key: \.password
       ) { field in
         YourPasswordField(
@@ -71,7 +77,7 @@ struct LoginFormView: View {
         )
       }
     }
-    
+
     YourButton(
       label: "Login",
       loading: loginForm.formState.isSubmiting,
