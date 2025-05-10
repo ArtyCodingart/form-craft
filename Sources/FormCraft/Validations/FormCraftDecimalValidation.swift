@@ -159,9 +159,16 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
         var copySelf = self
 
         copySelf.rules.append { value in
-//            if num == 0 || value % num != 0 {
-//                return .error(message: String(format: message, "\(num)"))
-//            }
+            guard mult != 0 else {
+                return .error(message: String(format: message, "\(num)"))
+            }
+
+            let quotient = num / mult
+            let truncated = Decimal(Double(trunc(Double(truncating: quotient as NSNumber))))
+
+            if num - (mult * truncated) != 0 {
+                return .error(message: String(format: message, "\(num)"))
+            }
 
             return .success(value: value)
         }
@@ -169,4 +176,3 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 }
-
