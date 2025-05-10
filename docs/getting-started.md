@@ -2,20 +2,29 @@
 
 ## Installation
 
-### Prerequisites
+> [!TIP] Prerequisites
+> - iOS 15+
 
-- iOS 15+
+If using Xcode, select File and choose Add Package Dependencies... from the menu, then enter the URL for the FormCraft GitHub repository which is https://github.com/ArtyCodingart/form-craft.
+
+If editing a Package.swift manifest, add FormCraft as a dependency such as:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ArtyCodingart/form-craft", branch: "main")
+]
+
+targets: [
+    .target(name: "MyApp", dependencies: ["FormCraft"])
+]
+```
+
+The final step is to import the package in a Swift file by using import FormCraft.
 
 ### Using CLI
 
 ```sh
-npm install --save form-craft
-```
-
-### Using XCode
-
-```sh
-npm install --save form-craft
+swift package install https://github.com/ArtyCodingart/form-craft --target MyApp
 ```
 
 ## Create your first form

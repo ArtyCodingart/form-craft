@@ -59,7 +59,7 @@ export default defineConfig({
           { text: 'Async Validation', link: '/' },
           { text: 'Cross-Field Validation', link: '/' },
           { text: 'Handle Server Errors', link: '/'},
-          { text: 'Contextual Validation', link: '/contextual-validation'},
+          { text: 'Contextual Validation', link: '/examples/contextual-validation'},
         ]
       }
     ],
@@ -71,6 +71,10 @@ export default defineConfig({
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/ArtyCodingart/form-craft' }
-    ]
+    ],
+
+    search: {
+      provider: 'local'
+    }
   }
 })
