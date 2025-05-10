@@ -36,7 +36,7 @@ public struct FormCraftControllerView<
     private let content: (_ fieldState: FieldState<Value>) -> Content
 
     @FocusState private var isFocused: Bool
-    @StateObject private var formKitControllerVM: FormCraftControllerVM
+    @StateObject private var formCraftControllerVM: FormCraftControllerVM
 
     private var formField: FormField {
         formConfig.fields[keyPath: key]
@@ -70,7 +70,7 @@ public struct FormCraftControllerView<
         self.key = key
         self.content = content
 
-        self._formKitControllerVM = .init(wrappedValue: FormCraftControllerVM(
+        self._formCraftControllerVM = .init(wrappedValue: FormCraftControllerVM(
             register: {
                 formConfig.registerField(key: key, name: formConfig.fields[keyPath: key].name)
             },
