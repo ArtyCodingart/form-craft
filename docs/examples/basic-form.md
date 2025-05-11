@@ -6,7 +6,7 @@ private struct LoginFormFields: FormCraftFields {
     FormCraftValidationRules()
       .string()
       .trimmed()
-      .isNotEmpty()
+      .notEmpty()
       .email()
       .validate(value: value)
   }
@@ -15,7 +15,7 @@ private struct LoginFormFields: FormCraftFields {
     FormCraftValidationRules()
       .string()
       .trimmed()
-      .isNotEmpty()
+      .notEmpty()
       .validate(value: value)
   }
 }

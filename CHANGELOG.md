@@ -12,19 +12,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Int validator: `lte` rule
 - Int validator: `gt` rule
 - Int validator: `gte` rule
-- Int validator: `isPositive` rule
-- Int validator: `isNonNegative` rule
-- Int validator: `isNegative` rule
-- Int validator: `isNonPositive` rule
+- Int validator: `positive` rule
+- Int validator: `nonNegative` rule
+- Int validator: `negative` rule
+- Int validator: `nonPositive` rule
 - Int validator: `multipleOf` rule
 - Decimal validator: `lt` rule
 - Decimal validator: `lte` rule
 - Decimal validator: `gt` rule
 - Decimal validator: `gte` rule
-- Decimal validator: `isPositive` rule
-- Decimal validator: `isNonNegative` rule
-- Decimal validator: `isNegative` rule
-- Decimal validator: `isNonPositive` rule
+- Decimal validator: `positive` rule
+- Decimal validator: `nonNegative` rule
+- Decimal validator: `negative` rule
+- Decimal validator: `nonPositive` rule
 - Decimal validator: `multipleOf` rule
 - String validator: `trimmed` rule
 
@@ -37,3 +37,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - String validator: renamed rule `isNotEmpty` -> `notEmpty`
 - String validator: renamed rule `equalTo` -> `equals`
+- Boolean validator: renamed rule `isTrue` -> `enabled`

@@ -165,7 +165,7 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         validationFields[key]?.cancel()
 
         guard let field = fields[keyPath: key] as? any FormCraftFieldConfigurable else { return }
-        
+
         validationFields[key] = Task {
             await withCheckedContinuation { continuation in
                 DispatchQueue.main.asyncAfter(deadline: .now() + field.delayValidation) {

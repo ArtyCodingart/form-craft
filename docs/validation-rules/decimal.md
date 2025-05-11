@@ -4,17 +4,18 @@
 - `gte(num: Decimal, message: String = "Value must be at least %@")`
 - `lt(num: Decimal, message: String = "Value must be less than %@")`
 - `lte(num: Decimal, message: String = "Value must not be more than %@")`
-- `isNonNegative(message: String = "Value must not be negative")`
-- `isNegative(message: String = "Value must be negative")`
-- `isNonPositive(message: String = "Value must not be positive")`
+- `positive(message: String = "Value must be positive")`
+- `nonNegative(message: String = "Value must not be negative")`
+- `negative(message: String = "Value must be negative")`
+- `nonPositive(message: String = "Value must not be positive")`
 - `multipleOf(num: Decimal,message: String = "Value must be a multiple of %@")`
 
 ::: details Example
 ```swift
 FormCraftValidationRules()
   .decimal()
-  .isNonNegative() // [!code highlight]
+  .nonNegative() // [!code highlight]
   .multipleOf(5) // [!code highlight]
-  .validate(nil)
+  .validate(value: 300)
 ```
 :::
