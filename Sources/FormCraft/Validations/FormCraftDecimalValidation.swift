@@ -84,7 +84,7 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     }
 
     /// Add validation check that value is positive
-    public func isPositive(
+    public func positive(
         message: String = "Value must be positive"
     ) -> Self {
         var copySelf = self
@@ -101,7 +101,7 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     }
 
     /// Add validation check that value is positive or zero
-    public func isNonNegative(
+    public func nonNegative(
         message: String = "Value must not be negative"
     ) -> Self {
         var copySelf = self
@@ -118,7 +118,7 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     }
 
     /// Add validation check that value is negative
-    public func isNegative(
+    public func negative(
         message: String = "Value must be negative"
     ) -> Self {
         var copySelf = self
@@ -135,7 +135,7 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     }
 
     /// Add validation check that value is negative or zero
-    public func isNonPositive(
+    public func nonPositive(
         message: String = "Value must not be positive"
     ) -> Self {
         var copySelf = self

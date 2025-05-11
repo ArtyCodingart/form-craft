@@ -1,6 +1,6 @@
 # String
 
-- `isNotEmpty(message: String = "Value required")`
+- `notEmpty(message: String = "Value required")`
 - `email(message: String = "Value must be a valid email")`
 - `phoneNumber(message: String = "Value must be a valid phone number")`
 - `equalTo(to: String, message: String = "Values ​​do not match")`
@@ -11,8 +11,8 @@
 ```swift
 FormCraftValidationRules()
   .string()
-  .isNotEmpty() // [!code highlight]
+  .notEmpty() // [!code highlight]
   .email() // [!code highlight]
-  .validate(false)
+  .validate(value: "john.doe@gmail.com")
 ```
 :::

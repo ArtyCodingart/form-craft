@@ -2,7 +2,7 @@
 
 ## Example usage
 
-FormCraft includes a wide set of built-in validation rules out of the box.  
+FormCraft includes a wide set of built-in validation rules out of the box.
 You can also define your own custom rules when needed.
 
 FormCraft provides the `FormCraftValidationRules` structure that contains built-in rule types like `.string`, `.integer`, `.boolean`, and many others.
@@ -10,20 +10,20 @@ FormCraft provides the `FormCraftValidationRules` structure that contains built-
 ```swift
 await FormCraftValidationRules()
   .string()
-  .isNotEmpty()
+  .notEmpty()
   .email()
   .optional()
   .validate(value: "test@gmail.com")
 ```
 
 ::: info RULE EXECUTION ORDER
-Validation rules are executed from top to bottom, with one exception — `.optional()`.  
-In this example, the execution order will be: `.optional()` → `.string()` → `.isNotEmpty()` → `.email()`.
+Validation rules are executed from top to bottom, with one exception — `.optional()`.
+In this example, the execution order will be: `.optional()` → `.string()` → `.notEmpty()` → `.email()`.
 
-The `.optional()` method is special because it transforms the value into an `Optional`.  
+The `.optional()` method is special because it transforms the value into an `Optional`.
 This method always runs first to avoid unnecessary validations — if the value is `nil`, the rest of the rules are skipped.
 
-Also, if any rule fails, the remaining rules are not executed.  
+Also, if any rule fails, the remaining rules are not executed.
 Each rule can modify the value as it goes. For example, `.string().trim().trimmed()` can remove spaces before passing it further.
 :::
 
@@ -36,13 +36,13 @@ func validate(raw: Any?) async -> FormCraftValidationResponse<Value>
 func validate(value: Value) async -> FormCraftValidationResponse<Value>
 ```
 
-The generic type `Value` is inferred based on the rule you're using.  
+The generic type `Value` is inferred based on the rule you're using.
 For example, `.string()` gives `String`, `.integer()` gives `Int`, etc.
 
 If you don’t know the exact type at runtime or want to cast dynamically, use the `raw: Any?` version.
 
 The `validate` method returns a `FormCraftValidationResponse<Value>` enum:
-- `.success(value: Value)` — validation passed  
+- `.success(value: Value)` — validation passed
 - `.error(message: String)` — validation failed
 
 ::: info
@@ -51,12 +51,12 @@ The `validate` method is asynchronous.
 
 ## Extending with custom rules
 
-Most real-world projects need custom validation logic.  
+Most real-world projects need custom validation logic.
 You can extend existing rule types or create entirely new ones.
 
 ### Adding a custom rule to an existing type (e.g., `.string`)
 
-Let’s say you want to check if an email already exists in your backend.  
+Let’s say you want to check if an email already exists in your backend.
 Since email is a string, we can extend the `.string()` validator:
 
 ```swift
@@ -89,7 +89,7 @@ You can now use this custom rule just like any built-in one:
 ```swift
 let result = await FormCraftValidationRules()
   .string()
-  .isNotEmpty()
+  .notEmpty()
   .email()
   .checkDuplicateEmail()
   .optional()
@@ -103,12 +103,12 @@ case .success(let value):
 }
 ```
 
-This also demonstrates the benefit of sequential validation:  
+This also demonstrates the benefit of sequential validation:
 If the `.email()` rule fails, the `.checkDuplicateEmail()` rule won’t run — saving you from an unnecessary API call.
 
 ### Adding a new custom type with rules
 
-You can define completely new rule types for complex data.  
+You can define completely new rule types for complex data.
 For example, let’s say you want to validate a `User` struct:
 
 ```swift
