@@ -1,10 +1,10 @@
 # String
 
-- `min(num: Int, message: String = "Value must be at least %@ characters")`
-- `max(num: Int, message: String = "Value must not be more than %@ characters")`
-- `length(num: Int, message: String = "Value must be exactly %@ characters")`
-- `NotEmpty(message: String = "Value required")`
-- `emoji(message: String = "Value must be an emoji")`
+- `min(num: Int, message: String = "Must be %@ or more characters long")`
+- `max(num: Int, message: String = "Must be %@ or fewer characters long")`
+- `length(num: Int, message: String = "Must be exactly %@ characters long")`
+- `notEmpty(message: String = "Must not be empty")`
+- `emoji(message: String = "Contains non-emoji characters")`
 - `url(message: String = "Value must be a valid URL")`
 - `nanoid(message: String = "Value must be a valid NanoID")`
 - `cuid(message: String = "Value must be a valid CUID")`
@@ -22,7 +22,7 @@
 - `ipv6(message: String = "Invalid IP address")`
 
 ## Email
-- `email(message: String = "Value must be a valid email")`
+- `email(message: String = "Invalid email address")`
 
 ## Transformations
 - `trim()` — removes leading and trailing whitespaces
