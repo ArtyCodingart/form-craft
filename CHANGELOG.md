@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [v0.0.2] - 2025-05-13
+
+### Added
+
 - Int validator: `lt` rule
 - Int validator: `lte` rule
 - Int validator: `gt` rule
@@ -39,12 +49,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - String validator: `date` rule
 
 ### Removed
+
 - Int validator: `min` rule
 - Int validator: `max` rule
 - Decimal validator: `min` rule
 - Decimal validator: `max` rule
 
 ### Changed
+
 - String validator: renamed rule `isNotEmpty` -> `notEmpty`
 - String validator: renamed rule `equalTo` -> `equals`
 - Boolean validator: renamed rule `isTrue` -> `checked`
