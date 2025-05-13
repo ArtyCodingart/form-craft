@@ -1,14 +1,14 @@
 # Decimal
 
-- `gt(num: Decimal, message: String = "Value must be greater than %@")`
-- `gte(num: Decimal, message: String = "Value must be at least %@")`
-- `lt(num: Decimal, message: String = "Value must be less than %@")`
-- `lte(num: Decimal, message: String = "Value must not be more than %@")`
-- `positive(message: String = "Value must be positive")`
-- `nonNegative(message: String = "Value must not be negative")`
-- `negative(message: String = "Value must be negative")`
-- `nonPositive(message: String = "Value must not be positive")`
-- `multipleOf(num: Decimal,message: String = "Value must be a multiple of %@")`
+- `gt(num: Decimal, message: String = "Must be greater than %@")`
+- `gte(num: Decimal, message: String = "Must be at least %@")`
+- `lt(num: Decimal, message: String = "Must be less than %@")`
+- `lte(num: Decimal, message: String = "Must not be more than %@")`
+- `positive(message: String = "Must be positive")`
+- `nonNegative(message: String = "Must not be negative")`
+- `negative(message: String = "Must be negative")`
+- `nonPositive(message: String = "Must not be positive")`
+- `multipleOf(num: Decimal,message: String = "Must be a multiple of %@")`
 
 ::: details Example
 ```swift

@@ -36,7 +36,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     }
 
     /// Add validation check that value is valid CUID
-    public func cuid(message: String = "Must be correct CUID") -> Self {
+    public func cuid(message: String = "Must be valid CUID") -> Self {
         addRule { value in
             let pattern = /^c[^\s-]{8,}$/
             let isMatches = try? pattern.wholeMatch(in: value) != nil
@@ -50,7 +50,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     }
 
     /// Add validation check that value is valid CUID2
-    public func cuid2(message: String = "Must be correct CUID2") -> Self {
+    public func cuid2(message: String = "Must be valid CUID2") -> Self {
         addRule { value in
             let pattern = /^[0-9a-z]+$/
             let isMatches = try? pattern.wholeMatch(in: value) != nil
@@ -64,7 +64,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     }
 
     /// Add validation check that value is valid ULID
-    public func ulid(message: String = "Must be correct ULID") -> Self {
+    public func ulid(message: String = "Must be valid ULID") -> Self {
         addRule { value in
             let pattern = /^[0-9A-HJKMNP-TV-Z]{26}$/
             let isMatches = try? pattern.wholeMatch(in: value) != nil
@@ -78,7 +78,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     }
 
     /// Add validation check that value is valid UUID
-    public func uuid(message: String = "Must be correct UUID") -> Self {
+    public func uuid(message: String = "Must be valid UUID") -> Self {
         addRule { value in
             // swiftlint:disable line_length
             let pattern = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
@@ -94,7 +94,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     }
 
     /// Add validation check that value is valid ULID
-    public func nanoId(message: String = "Must be correct NanoID") -> Self {
+    public func nanoId(message: String = "Must be valid NanoID") -> Self {
         addRule { value in
             let pattern = /^[a-z0-9_-]{21}$/
             let isMatches = try? pattern.wholeMatch(in: value) != nil

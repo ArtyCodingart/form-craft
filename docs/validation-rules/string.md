@@ -5,15 +5,15 @@
 - `length(num: Int, message: String = "Must be exactly %@ characters long")`
 - `notEmpty(message: String = "Must not be empty")`
 - `emoji(message: String = "Contains non-emoji characters")`
-- `url(message: String = "Value must be a valid URL")`
-- `nanoid(message: String = "Value must be a valid NanoID")`
-- `cuid(message: String = "Value must be a valid CUID")`
-- `cuid2(message: String = "Value must be a valid CUID2")`
-- `ulid(message: String = "Value must be a valid ULID")`
+- `url(message: String = "Must be valid URL")`
+- `nanoid(message: String = "Must be valid NanoID")`
+- `cuid(message: String = "Must be valid CUID")`
+- `cuid2(message: String = "Must be valid CUID2")`
+- `ulid(message: String = "Must be valid ULID")`
 - `regex(pattern: Regex, message: String = "Invalid format")`
-- `includes(string: String, message: String = "Value must include %@")`
-- `startsWith(string: String, message: String = "Value must start with %@")`
-- `endsWith(string: String, message: String = "Value must end with %@")`
+- `includes(string: String, message: String = "Must include %@")`
+- `startsWith(string: String, message: String = "Must start with %@")`
+- `endsWith(string: String, message: String = "Must end with %@")`
 - `cidr(message: String = "Invalid CIDR format")`
 - `equalTo(to: String, message: String = "Values do not match")`
 
@@ -68,4 +68,4 @@ datetime.validate(value: "H_10_M_2") // ❌ is not valid
 ```
 
 ## UUID
-- `uuid(message: String = "Value must be a valid UUID")`
+- `uuid(message: String = "Must be a valid UUID")`
