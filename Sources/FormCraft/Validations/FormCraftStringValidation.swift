@@ -10,26 +10,20 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     public var rules: [(_ value: String) async -> FormCraftValidationResponse<String>] = []
 
     /// Add validation check that value is not empty
-    public func notEmpty(message: String = "Value required") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    public func notEmpty(message: String = "Must not be empty") -> Self {
+        addRule { value in
             if value.isEmpty {
                 return .error(message: message)
             }
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value does not contains whitespace characters on start/end
     /// https://en.wikipedia.org/wiki/Whitespace_character
-    public func trimmed(message: String = "Value must not start or end with empty characters") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    public func trimmed(message: String = "Must not start or end with empty characters") -> Self {
+        addRule { value in
             let pattern = /^\S.*\S$/
             let isMatches = try? pattern.wholeMatch(in: value) != nil
 
@@ -39,15 +33,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value is valid CUID
-    public func cuid(message: String = "Value must be correct CUID") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    public func cuid(message: String = "Must be correct CUID") -> Self {
+        addRule { value in
             let pattern = /^c[^\s-]{8,}$/
             let isMatches = try? pattern.wholeMatch(in: value) != nil
 
@@ -57,15 +47,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value is valid CUID2
-    public func cuid2(message: String = "Value must be correct CUID2") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    public func cuid2(message: String = "Must be correct CUID2") -> Self {
+        addRule { value in
             let pattern = /^[0-9a-z]+$/
             let isMatches = try? pattern.wholeMatch(in: value) != nil
 
@@ -75,15 +61,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value is valid ULID
-    public func ulid(message: String = "Value must be correct ULID") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    public func ulid(message: String = "Must be correct ULID") -> Self {
+        addRule { value in
             let pattern = /^[0-9A-HJKMNP-TV-Z]{26}$/
             let isMatches = try? pattern.wholeMatch(in: value) != nil
 
@@ -93,15 +75,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value is valid UUID
-    public func uuid(message: String = "Value must be correct UUID") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    public func uuid(message: String = "Must be correct UUID") -> Self {
+        addRule { value in
             // swiftlint:disable line_length
             let pattern = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
             // swiftlint:enable line_length
@@ -113,15 +91,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value is valid ULID
-    public func nanoId(message: String = "Value must be correct NanoID") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    public func nanoId(message: String = "Must be correct NanoID") -> Self {
+        addRule { value in
             let pattern = /^[a-z0-9_-]{21}$/
             let isMatches = try? pattern.wholeMatch(in: value) != nil
 
@@ -131,15 +105,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value is valid IPv4
-    public func ipv4(message: String = "Value must be correct IPv4") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    public func ipv4(message: String = "Invalid IPv4 address") -> Self {
+        addRule { value in
             // swiftlint:disable line_length
             let pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/
             // swiftlint:enable line_length
@@ -151,15 +121,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value is valid IPv4
-    private func ipv4cidr(message: String = "Value must be correct IPv4 cidr") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    private func ipv4cidr(message: String = "Must be correct IPv4 cidr") -> Self {
+        addRule { value in
             // swiftlint:disable line_length
             let pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/
             // swiftlint:enable line_length
@@ -171,15 +137,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value is valid IPv6
-    public func ipv6(message: String = "Value must be correct IPv6") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    public func ipv6(message: String = "Invalid IPv6 address") -> Self {
+        addRule { value in
             // swiftlint:disable line_length
             let pattern = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/
             // swiftlint:enable line_length
@@ -191,15 +153,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value is valid IPv6 CIDR
-    private func ipv6cidr(message: String = "Value must be correct IPv6 cidr") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    private func ipv6cidr(message: String = "Must be correct IPv6 cidr") -> Self {
+        addRule { value in
             // swiftlint:disable line_length
             let pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/
             // swiftlint:enable line_length
@@ -211,12 +169,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value is valid CIDR
-    public func cidr(message: String = "Value must be correct CIDR") -> Self {
+    /// TODO Need to fix
+    public func cidr(message: String = "Must be correct CIDR") -> Self {
         var copySelf = self
 
         copySelf.ipv4cidr()
@@ -226,7 +183,8 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     }
 
     /// Add validation check that value is valid IP
-    public func ip(message: String = "Value must be correct IP") -> Self {
+    /// TODO Need to fix
+    public func ip(message: String = "Invalid IP address") -> Self {
         var copySelf = self
 
         copySelf.ipv4()
@@ -236,10 +194,8 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     }
 
     /// Add validation check that value is valid ISO date format (YYYY-MM-DD)
-    private func date(message: String = "Value must be correct date YYYY-MM-DD") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    private func date(message: String = "Must be correct date YYYY-MM-DD") -> Self {
+        addRule { value in
             // swiftlint:disable line_length
             let pattern = /^((\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\d|3[01])|(0[469]|11)-(0[1-9]|[12]\d|30)|(02)-(0[1-9]|1\d|2[0-8])))$/
             // swiftlint:enable line_length
@@ -251,15 +207,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value is valid email address
-    public func email(message: String = "Value must be a valid email") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    public func email(message: String = "Invalid email address") -> Self {
+        addRule { value in
             // swiftlint:disable line_length
             let pattern = #"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"#
             // swiftlint:enable line_length
@@ -272,16 +224,16 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
-    /// Add validation check that value is valid E.164 phone number
+    /// Add validation check that value is looks like E.164 phone number
     /// https://en.wikipedia.org/wiki/E.164
-    public func phoneNumber(message: String = "Value must be a valid phone number") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    /// > Note that it is not check that phone number really correct.
+    /// > If you want to correct phone number validation,
+    /// > consider to using 3rd party library, throung custom rule.
+    /// > Example: https://artycodingart.github.io/form-craft/examples/strong-phone-validation
+    public func phoneNumber(message: String = "Must be a valid phone number") -> Self {
+        addRule { value in
             let pattern = #"^\+?[0-9]{7,15}$"#
             let predicate = NSPredicate(format: "SELF MATCHES %@", pattern)
 
@@ -291,58 +243,44 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that user input value is equals to provided value
-    public func equals(to: String, message: String = "Values do not match") -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+    public func equals(to: String, message: String = "Values doesn't not match") -> Self {
+        addRule { value in
             if value != to {
                 return .error(message: message)
             }
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value is at least `min` characters length
     public func minLength(
         min: Int,
-        message: String = "Value must be at least %@ characters"
+        message: String = "Must be %@ or more characters long"
     ) -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+        addRule { value in
             if value.count < min {
                 return .error(message: String(format: message, "\(min)"))
             }
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Add validation check that value is at most `max` characters length
     public func maxLength(
         max: Int,
-        message: String = "Value must not be more than %@"
+        message: String = "Must be %@ or fewer characters long"
     ) -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+        addRule { value in
             if value.count > max {
                 return .error(message: String(format: message, "\(max)"))
             }
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 }

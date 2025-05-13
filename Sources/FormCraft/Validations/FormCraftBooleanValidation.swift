@@ -7,7 +7,7 @@ public extension FormCraftValidationRules {
 public struct FormCraftBooleanValidation: FormCraftValidationTypeRules {
     public var rules: [(_ value: Bool) async -> FormCraftValidationResponse<Bool>] = []
 
-    public func checked(message: String = "Value required") -> Self {
+    public func checked(message: String = "Required") -> Self {
         addRule { value in
             if !value {
                 return .error(message: message)
