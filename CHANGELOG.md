@@ -27,6 +27,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Decimal validator: `nonPositive` rule
 - Decimal validator: `multipleOf` rule
 - String validator: `trimmed` rule
+- String validator: `cuid` rule
+- String validator: `cuid2` rule
+- String validator: `ulid` rule
+- String validator: `uuid` rule
+- String validator: `nanoId` rule
+- String validator: `ipv4` rule
+- String validator: `ipv6` rule
+- String validator: `cidr` rule
+- String validator: `ip` rule
+- String validator: `date` rule
 
 ### Removed
 - Int validator: `min` rule
@@ -37,4 +47,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - String validator: renamed rule `isNotEmpty` -> `notEmpty`
 - String validator: renamed rule `equalTo` -> `equals`
-- Boolean validator: renamed rule `isTrue` -> `enabled`
+- Boolean validator: renamed rule `isTrue` -> `checked`
