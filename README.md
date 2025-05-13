@@ -47,7 +47,8 @@ struct LoginFormView: View {
     fields: FormCraftValidatedFields<LoginFormFields>
   ) async {
     await sendRequstToServer(variables: LoginRequest(
-      username: fields.getValue(key: \.login)
+      login: fields.login,
+      password: fields.password,
     ))
   }
 
