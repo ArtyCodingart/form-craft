@@ -11,20 +11,21 @@ FormCraft provides the `FormCraftValidationRules` structure that contains built-
 await FormCraftValidationRules()
   .string()
   .notEmpty()
+  .notEmpty()
   .email()
   .optional()
   .validate(value: "test@gmail.com")
 ```
 
 ::: info RULE EXECUTION ORDER
-Validation rules are executed from top to bottom, with one exception — `.optional()`.
-In this example, the execution order will be: `.optional()` → `.string()` → `.notEmpty()` → `.email()`.
+Validation rules are executed from top to bottom, with one exception — `.optional()`.  
+In this example, the execution order will be: `.optional()` → `.string()` → `.empty()` → `.email()`.
 
 The `.optional()` method is special because it transforms the value into an `Optional`.
 This method always runs first to avoid unnecessary validations — if the value is `nil`, the rest of the rules are skipped.
 
-Also, if any rule fails, the remaining rules are not executed.
-Each rule can modify the value as it goes. For example, `.string().trim().trimmed()` can remove spaces before passing it further.
+Also, if any rule fails, the remaining rules are not executed.  
+Each rule can modify the value as it goes. For example, `.string().trim()` can remove spaces before passing it to `.trimmed()`.
 :::
 
 ## The `.validate(value: Any?)` and `.validate(raw: Value)` methods
@@ -56,8 +57,8 @@ You can extend existing rule types or create entirely new ones.
 
 ### Adding a custom rule to an existing type (e.g., `.string`)
 
-Let’s say you want to check if an email already exists in your backend.
-Since email is a string, we can extend the `.string()` validator:
+Let’s say you want to check if an email already exists in your backend.  
+Since email is a string, we can extend the `FormCraftStringValidation` validator:
 
 ```swift
 extension FormCraftStringValidation {

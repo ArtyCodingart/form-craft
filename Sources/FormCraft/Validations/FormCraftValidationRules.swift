@@ -1,7 +1,9 @@
 public protocol FormCraftValidationTypeRules {
     associatedtype Value: Sendable
 
-    var rules: [(_ value: Value) async -> FormCraftValidationResponse<Value>] { get set }
+    typealias Rule = (_ value: Value) async -> FormCraftValidationResponse<Value>
+
+    var rules: [Rule] { get set }
 
     func validate(value: Value) async -> FormCraftValidationResponse<Value>
 }
@@ -36,6 +38,14 @@ public extension FormCraftValidationTypeRules {
         }
 
         return .success(value: modifyValue)
+    }
+
+    func addRule(_ rule: @escaping Rule) -> Self {
+        var copySelf = self
+        
+        copySelf.rules.append(rule)
+        
+        return copySelf
     }
 }
 

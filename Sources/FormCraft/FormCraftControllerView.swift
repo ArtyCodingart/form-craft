@@ -75,7 +75,7 @@ public struct FormCraftControllerView<
                 formConfig.registerField(key: key, name: formConfig.fields[keyPath: key].name)
             },
             unRegister: {
-                formConfig.unRegisterField(key: key)
+                formConfig.unregisterField(key: key)
             }
         ))
     }

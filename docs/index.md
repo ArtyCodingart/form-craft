@@ -17,7 +17,7 @@ hero:
     alt: FormCraft
 
 features:
-  - icon: 🧱
+  - icon: ✨
     title: Build smart forms. Faster.
     details: Stop fighting with manual checks. Declare your fields once — get validation, debounced updates, async support, and type-safe output instantly. No boilerplate. Just clean SwiftUI.
   - icon: ⚡️

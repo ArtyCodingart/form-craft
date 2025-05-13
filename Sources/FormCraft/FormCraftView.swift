@@ -19,12 +19,12 @@ public struct FormCraftView<
         return !formConfig.focusedFields.isEmpty
     }
     private var isFirst: Bool {
-        guard let first = formConfig.registredFields.first else { return false }
+        guard let first = formConfig.registeredFields.first else { return false }
 
         return formConfig.focusedFields.contains(first)
     }
     private var isLast: Bool {
-        guard let last = formConfig.registredFields.last else { return false }
+        guard let last = formConfig.registeredFields.last else { return false }
 
         return formConfig.focusedFields.contains(last)
     }
@@ -33,25 +33,25 @@ public struct FormCraftView<
         if isLast {
             return
         }
-        let currentIndex = formConfig.registredFields.firstIndex(where: { formConfig.focusedFields.contains($0) })
+        let currentIndex = formConfig.registeredFields.firstIndex(where: { formConfig.focusedFields.contains($0) })
 
         guard let currentIndex = currentIndex else { return }
 
-        let downIndex = formConfig.registredFields.index(after: currentIndex)
+        let downIndex = formConfig.registeredFields.index(after: currentIndex)
 
-        formConfig.focusedFields.append(formConfig.registredFields[downIndex])
+        formConfig.focusedFields.append(formConfig.registeredFields[downIndex])
     }
     private func upFocus() {
         if isFirst {
             return
         }
-        let currentIndex = formConfig.registredFields.firstIndex(where: { formConfig.focusedFields.contains($0) })
+        let currentIndex = formConfig.registeredFields.firstIndex(where: { formConfig.focusedFields.contains($0) })
 
         guard let currentIndex = currentIndex else { return }
 
-        let upIndex = formConfig.registredFields.index(before: currentIndex)
+        let upIndex = formConfig.registeredFields.index(before: currentIndex)
 
-        formConfig.focusedFields.append(formConfig.registredFields[upIndex])
+        formConfig.focusedFields.append(formConfig.registeredFields[upIndex])
     }
 
     public var body: some View {
