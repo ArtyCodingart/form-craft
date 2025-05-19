@@ -1,12 +1,20 @@
 import Testing
 @testable import FormCraft
 
-@Test func exampleBoolTest() async throws {
-    // Write your test here and use APIs like `#expect(...)` to check expected conditions.
-    let validation = FormCraftBooleanValidation()
+struct FormCraftBooleanValidationTests {
+    @Test
+    func testCheckedSucceedsForTrue() async {
+        let validation = FormCraftBooleanValidation().checked()
+        let response = await validation.validate(value: true)
+        // Should be .success(true)
+        #expect({ if case .success(let v) = response { return v } else { return false } }())
+    }
 
-    // true → should pass
-    #expect(validation.validate(value: true), because: "По умолчанию значение true должно считаться валидным")
-    // false → should fails
-    #expect(!validation.validate(value: false), because: "false не равняется ожидаемому true")
+    @Test
+    func testCheckedFailsForFalse() async {
+        let validation = FormCraftBooleanValidation().checked(message: "Required")
+        let response = await validation.validate(value: false)
+        // Should be .error("Required")
+        #expect({ if case .error(let msg) = response { return msg == "Required" } else { return false } }())
+    }
 }
