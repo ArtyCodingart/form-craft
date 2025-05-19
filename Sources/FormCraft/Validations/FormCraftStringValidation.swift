@@ -22,12 +22,12 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
 
     /// Add validation check that value does not contains whitespace characters on start/end
     /// https://en.wikipedia.org/wiki/Whitespace_character
-    public func trimmed(message: String = "Must not start or end with empty characters") -> Self {
+    public func trimmed(message: String = "Must not start or end with whitespace characters") -> Self {
         addRule { value in
             let pattern = /^\S.*\S$/
-            let isMatches = try? pattern.wholeMatch(in: value) != nil
+            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
-            guard !isMatches else {
+            guard isMatch else {
                 return .error(message: message)
             }
 
@@ -39,9 +39,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     public func cuid(message: String = "Must be valid CUID") -> Self {
         addRule { value in
             let pattern = /^c[^\s-]{8,}$/
-            let isMatches = try? pattern.wholeMatch(in: value) != nil
+            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
-            guard !isMatches else {
+            guard isMatch else {
                 return .error(message: message)
             }
 
@@ -53,9 +53,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     public func cuid2(message: String = "Must be valid CUID2") -> Self {
         addRule { value in
             let pattern = /^[0-9a-z]+$/
-            let isMatches = try? pattern.wholeMatch(in: value) != nil
+            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
-            guard !isMatches else {
+            guard isMatch else {
                 return .error(message: message)
             }
 
@@ -67,9 +67,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     public func ulid(message: String = "Must be valid ULID") -> Self {
         addRule { value in
             let pattern = /^[0-9A-HJKMNP-TV-Z]{26}$/
-            let isMatches = try? pattern.wholeMatch(in: value) != nil
+            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
-            guard !isMatches else {
+            guard isMatch else {
                 return .error(message: message)
             }
 
@@ -83,9 +83,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             // swiftlint:disable line_length
             let pattern = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
             // swiftlint:enable line_length
-            let isMatches = try? pattern.wholeMatch(in: value) != nil
+            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
-            guard !isMatches else {
+            guard isMatch else {
                 return .error(message: message)
             }
 
@@ -97,9 +97,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     public func nanoId(message: String = "Must be valid NanoID") -> Self {
         addRule { value in
             let pattern = /^[a-z0-9_-]{21}$/
-            let isMatches = try? pattern.wholeMatch(in: value) != nil
+            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
-            guard !isMatches else {
+            guard isMatch else {
                 return .error(message: message)
             }
 
@@ -113,9 +113,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             // swiftlint:disable line_length
             let pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/
             // swiftlint:enable line_length
-            let isMatches = try? pattern.wholeMatch(in: value) != nil
+            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
-            guard !isMatches else {
+            guard isMatch else {
                 return .error(message: message)
             }
 
@@ -129,9 +129,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             // swiftlint:disable line_length
             let pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/
             // swiftlint:enable line_length
-            let isMatches = try? pattern.wholeMatch(in: value) != nil
+            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
-            guard !isMatches else {
+            guard isMatch else {
                 return .error(message: message)
             }
 
@@ -145,9 +145,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             // swiftlint:disable line_length
             let pattern = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/
             // swiftlint:enable line_length
-            let isMatches = try? pattern.wholeMatch(in: value) != nil
+            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
-            guard !isMatches else {
+            guard isMatch else {
                 return .error(message: message)
             }
 
@@ -161,9 +161,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             // swiftlint:disable line_length
             let pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/
             // swiftlint:enable line_length
-            let isMatches = try? pattern.wholeMatch(in: value) != nil
+            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
-            guard !isMatches else {
+            guard isMatch else {
                 return .error(message: message)
             }
 
@@ -174,23 +174,15 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     /// Add validation check that value is valid CIDR
     /// TODO Need to fix
     public func cidr(message: String = "Must be correct CIDR") -> Self {
-        var copySelf = self
-
-        copySelf.ipv4cidr()
-        copySelf.ipv6cidr()
-
-        return copySelf
+        return ipv4cidr(message: message)
+            .ipv6cidr(message: message)
     }
 
     /// Add validation check that value is valid IP
     /// TODO Need to fix
     public func ip(message: String = "Invalid IP address") -> Self {
-        var copySelf = self
-
-        copySelf.ipv4()
-        copySelf.ipv6()
-
-        return copySelf
+        return ipv4cidr(message: message)
+            .ipv6cidr(message: message)
     }
 
     /// Add validation check that value is valid ISO date format (YYYY-MM-DD)
@@ -199,9 +191,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             // swiftlint:disable line_length
             let pattern = /^((\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\d|3[01])|(0[469]|11)-(0[1-9]|[12]\d|30)|(02)-(0[1-9]|1\d|2[0-8])))$/
             // swiftlint:enable line_length
-            let isMatches = try? pattern.wholeMatch(in: value) != nil
+            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
-            guard !isMatches else {
+            guard isMatch else {
                 return .error(message: message)
             }
 
