@@ -152,7 +152,7 @@ struct LoginFormView: View {
   private func handleLogin( // [!code ++]
     fields: FormCraftValidatedFields<LoginFormFields> // [!code ++]
   ) async { // [!code ++]
-    await sendRequstToServer(variables: LoginRequest( // [!code ++]
+    await sendRequestToServer(variables: LoginRequest( // [!code ++]
       login: fields.login, // [!code ++]
       password: fields.password, // [!code ++]
     )) // [!code ++]

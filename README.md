@@ -3,6 +3,7 @@
 ![GitHub Release](https://img.shields.io/github/v/release/ArtyCodingart/form-craft?color=%239a60fe)
 ![Static Badge](https://img.shields.io/badge/iOS-15%2B-test?logo=apple)
 ![GitHub License](https://img.shields.io/github/license/ArtyCodingart/form-craft)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ArtyCodingart/form-craft/tests.yml?branch=main)
 [![DOCS](https://img.shields.io/badge/DOCS-8A2BE2)](https://artycodingart.github.io/form-craft/)
 
 
@@ -46,7 +47,7 @@ struct LoginFormView: View {
   private func handleLogin(
     fields: FormCraftValidatedFields<LoginFormFields>
   ) async {
-    await sendRequstToServer(variables: LoginRequest(
+    await sendRequestToServer(variables: LoginRequest(
       login: fields.login,
       password: fields.password,
     ))
