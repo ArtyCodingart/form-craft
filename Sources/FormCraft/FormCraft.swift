@@ -28,7 +28,7 @@ public protocol FormCraftConfig: ObservableObject {
         value: Field.Value,
         config: FormCraftSetValueConfig?
     )
-    func setDefaultValues<Field: FormCraftFieldConfigurable>(
+    func setValues<Field: FormCraftFieldConfigurable>(
         values: [WritableKeyPath<Fields, Field>: Field.Value]
     )
 }
@@ -310,12 +310,16 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         }
     }
 
-    public func setDefaultValues<Field: FormCraftFieldConfigurable>(
+    public func setValues<Field: FormCraftFieldConfigurable>(
         values: [WritableKeyPath<Fields, Field> : Field.Value]
     ) {
+        var newFields = fields
+
         values.forEach { item in
-            setValue(key: item.key, value: item.value)
+            newFields[keyPath: item.key].value = item.value
         }
+
+        fields = newFields
     }
 }
 

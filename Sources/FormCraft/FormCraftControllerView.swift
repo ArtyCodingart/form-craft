@@ -97,6 +97,10 @@ public struct FormCraftControllerView<
                 Task { await formConfig.validateField(key: key) }
             }
             .onChange(of: formConfig.fields[keyPath: key].value) { _ in
+                if !isFocused {
+                    return
+                }
+
                 Task {
                     await formConfig.validateField(key: key)
                 }
