@@ -9,6 +9,8 @@ public extension FormCraftValidationRules {
 public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     public var rules: [(_ value: String) async -> FormCraftValidationResponse<String>] = []
 
+    public init() {}
+
     /// Add validation check that value is not empty
     public func notEmpty(message: String = "Must not be empty") -> Self {
         addRule { value in
@@ -24,14 +26,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     /// https://en.wikipedia.org/wiki/Whitespace_character
     public func trimmed(message: String = "Must not start or end with whitespace characters") -> Self {
         addRule { value in
-            let pattern = /^\S.*\S$/
-            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
+            let t = value.trimmingCharacters(in: .whitespacesAndNewlines)
 
-            guard isMatch else {
-                return .error(message: message)
-            }
-
-            return .success(value: value)
+            return (t == value) ? .success(value: value) : .error(message: message)
         }
     }
 

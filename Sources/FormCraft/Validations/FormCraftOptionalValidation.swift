@@ -1,10 +1,10 @@
 public extension FormCraftValidationTypeRules {
-    func optional() -> OptionalValidator<Self> {
+    func optional() -> FormCraftOptionalValidation<Self> {
         .init(base: self)
     }
 }
 
-public struct OptionalValidator<Base: FormCraftValidationTypeRules>: FormCraftValidationTypeRules {
+public struct FormCraftOptionalValidation<Base: FormCraftValidationTypeRules>: FormCraftValidationTypeRules {
     public typealias Value = Base.Value?
 
     public var rules: [(Value) async -> FormCraftValidationResponse<Value>] = []
