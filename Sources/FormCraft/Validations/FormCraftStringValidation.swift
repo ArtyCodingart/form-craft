@@ -234,7 +234,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    func regex(pattern: Regex<Substring>, message: String = "Value is not valid") -> Self {
+    public func regex(pattern: Regex<Substring>, message: String = "Value is not valid") -> Self {
         var copySelf = self
 
         copySelf.rules.append { value in
