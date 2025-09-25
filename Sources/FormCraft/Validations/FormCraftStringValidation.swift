@@ -234,6 +234,22 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
+    func regex(pattern: Regex<Substring>, message: String = "Value is not valid") -> Self {
+        var copySelf = self
+
+        copySelf.rules.append { value in
+            let isMatches = (try? pattern.wholeMatch(in: value)) != nil
+
+            guard isMatches else {
+                return .error(message: message)
+            }
+
+            return .success(value: value)
+        }
+
+        return copySelf
+    }
+
     /// Add validation check that user input value is equals to provided value
     public func equals(to: String, message: String = "Values doesn't not match") -> Self {
         addRule { value in
