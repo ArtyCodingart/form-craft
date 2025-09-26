@@ -42,7 +42,7 @@ public protocol FormCraftFieldConfigurable {
     var delayValidation: FormCraftDelayValidation { get }
     var rule: (_ value: Value) async -> FormCraftValidationResponse<ValidatedValue> { get }
 
-    func validate() async -> String?
+    func validate() async -> (ValidatedValue?, String?)
 }
 
 public enum FormCraftValidationResponse<Value: Sendable>: Error {
@@ -85,15 +85,20 @@ public struct FormCraftSetValueConfig {
 @dynamicMemberLookup @MainActor
 public struct FormCraftValidatedFields<Fields> {
     private let fields: Fields
+    private let validatedFields: [PartialKeyPath<Fields>: Sendable]
 
-    public init(fields: Fields) {
+    public init(
+        fields: Fields,
+        validatedFields: [PartialKeyPath<Fields>: Sendable]
+    ) {
         self.fields = fields
+        self.validatedFields = validatedFields
     }
 
     public subscript<Field: FormCraftFieldConfigurable>(
         dynamicMember keyPath: KeyPath<Fields, Field>
     ) -> Field.ValidatedValue {
-        fields[keyPath: keyPath].value as! Field.ValidatedValue
+        validatedFields[keyPath] as! Field.ValidatedValue
     }
 }
 
@@ -144,6 +149,7 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
     @Published public var formState = FormCraftFormState(
         isSubmitting: false
     )
+    @Published public var validatedFields: [Key: Sendable] = [:]
 
     private let initialFields: Fields
     private var fieldNameByKeyPath: [Key: String] = [:]
@@ -204,17 +210,13 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         guard let field = fields[keyPath: key] as? any FormCraftFieldConfigurable else { return }
 
         validationFields[key] = Task {
-            await withCheckedContinuation { continuation in
-                DispatchQueue.main.asyncAfter(deadline: .now() + field.delayValidation.seconds) {
-                    continuation.resume()
-                }
-            }
+            try? await Task.sleep(nanoseconds: UInt64(field.delayValidation.seconds * 1_000_000_000))
 
             if Task.isCancelled {
                 return
             }
 
-            let errorMessage = await field.validate()
+            let (validatedValue, errorMessage) = await field.validate()
 
             if Task.isCancelled {
                 return
@@ -225,7 +227,9 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
                     key: key,
                     message: errorMessage
                 )
+                validatedFields.removeValue(forKey: key)
             } else {
+                validatedFields[key] = validatedValue
                 clearError(key: key)
             }
 
@@ -290,7 +294,10 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
                 let isValid = await self.validateFields()
 
                 if isValid {
-                    await onSuccess(FormCraftValidatedFields(fields: self.fields))
+                    await onSuccess(FormCraftValidatedFields(
+                        fields: self.fields,
+                        validatedFields: self.validatedFields
+                    ))
                 }
 
                 self.formState.isSubmitting = false
@@ -341,14 +348,14 @@ public struct FormCraftField<Value: Equatable & Sendable, ValidatedValue: Sendab
         self.rule = rule
     }
 
-    public func validate() async -> String? {
+    public func validate() async -> (ValidatedValue?, String?) {
         let validationResponse = await rule(value)
 
         switch validationResponse {
-        case .success:
-            return nil
+        case .success(let validatedValue):
+            return (validatedValue, nil)
         case .error(let message):
-            return message
+            return (nil, message)
         }
     }
 }
