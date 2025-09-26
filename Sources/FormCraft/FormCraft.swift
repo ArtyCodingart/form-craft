@@ -66,6 +66,31 @@ public enum FormCraftValidationResponse<Value: Sendable>: Error {
     }
 }
 
+
+// Сравнение по значению (только если Value: Equatable)
+extension FormCraftValidationResponse: Equatable where Value: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case let (.success(lv), .success(rv)):
+            return lv == rv
+        case let (.error(lm), .error(rm)):
+            return lm == rm
+        default:
+            return false
+        }
+    }
+}
+
+// Красивые сообщения в падениях тестов
+extension FormCraftValidationResponse: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .success(let v): return "success(value: \(v))"
+        case .error(let m):   return "error(message: \"\(m)\")"
+        }
+    }
+}
+
 public struct FormCraftFormState {
     public var isSubmitting: Bool
 
