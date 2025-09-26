@@ -1,17 +1,22 @@
 import Foundation
 
 public extension FormCraftValidationRules {
+    /// Creates a validation builder for `String` values.
+    ///
+    /// - Returns: A string validation builder for chaining rules.
     func string() -> FormCraftStringValidation {
         .init()
     }
 }
 
+/// A validation builder for `String` values that supports composing multiple rules.
 public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     public var rules: [(_ value: String) async -> FormCraftValidationResponse<String>] = []
 
-    public init() {}
-
-    /// Add validation check that value is not empty
+    /// Validates that the value is not empty.
+    ///
+    /// - Parameter message: The error message returned when the value is empty.
+    /// - Returns: The validation builder for chaining.
     public func notEmpty(message: String = "Must not be empty") -> Self {
         addRule { value in
             if value.isEmpty {
@@ -22,8 +27,12 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value does not contains whitespace characters on start/end
-    /// https://en.wikipedia.org/wiki/Whitespace_character
+    /// Validates that the value does not start or end with whitespace characters.
+    ///
+    /// See: https://en.wikipedia.org/wiki/Whitespace_character
+    ///
+    /// - Parameter message: The error message returned when leading or trailing whitespace is present.
+    /// - Returns: The validation builder for chaining.
     public func trimmed(message: String = "Must not start or end with whitespace characters") -> Self {
         addRule { value in
             let t = value.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -32,7 +41,10 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value is valid CUID
+    /// Validates that the value is a valid CUID.
+    ///
+    /// - Parameter message: The error message returned when the value is not a valid CUID.
+    /// - Returns: The validation builder for chaining.
     public func cuid(message: String = "Must be valid CUID") -> Self {
         addRule { value in
             let pattern = /^c[^\s-]{8,}$/
@@ -46,7 +58,10 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value is valid CUID2
+    /// Validates that the value is a valid CUID2.
+    ///
+    /// - Parameter message: The error message returned when the value is not a valid CUID2.
+    /// - Returns: The validation builder for chaining.
     public func cuid2(message: String = "Must be valid CUID2") -> Self {
         addRule { value in
             let pattern = /^[0-9a-z]+$/
@@ -60,7 +75,10 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value is valid ULID
+    /// Validates that the value is a valid ULID.
+    ///
+    /// - Parameter message: The error message returned when the value is not a valid ULID.
+    /// - Returns: The validation builder for chaining.
     public func ulid(message: String = "Must be valid ULID") -> Self {
         addRule { value in
             let pattern = /^[0-9A-HJKMNP-TV-Z]{26}$/
@@ -74,7 +92,10 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value is valid UUID
+    /// Validates that the value is a valid UUID.
+    ///
+    /// - Parameter message: The error message returned when the value is not a valid UUID.
+    /// - Returns: The validation builder for chaining.
     public func uuid(message: String = "Must be valid UUID") -> Self {
         addRule { value in
             // swiftlint:disable line_length
@@ -90,7 +111,10 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value is valid ULID
+    /// Validates that the value is a valid NanoID.
+    ///
+    /// - Parameter message: The error message returned when the value is not a valid NanoID.
+    /// - Returns: The validation builder for chaining.
     public func nanoId(message: String = "Must be valid NanoID") -> Self {
         addRule { value in
             let pattern = /^[a-z0-9_-]{21}$/
@@ -104,7 +128,10 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value is valid IPv4
+    /// Validates that the value is a valid IPv4 address.
+    ///
+    /// - Parameter message: The error message returned when the value is not a valid IPv4 address.
+    /// - Returns: The validation builder for chaining.
     public func ipv4(message: String = "Invalid IPv4 address") -> Self {
         addRule { value in
             // swiftlint:disable line_length
@@ -120,23 +147,10 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value is valid IPv4
-    private func ipv4cidr(message: String = "Must be correct IPv4 cidr") -> Self {
-        addRule { value in
-            // swiftlint:disable line_length
-            let pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/
-            // swiftlint:enable line_length
-            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
-
-            guard isMatch else {
-                return .error(message: message)
-            }
-
-            return .success(value: value)
-        }
-    }
-
-    /// Add validation check that value is valid IPv6
+    /// Validates that the value is a valid IPv6 address.
+    ///
+    /// - Parameter message: The error message returned when the value is not a valid IPv6 address.
+    /// - Returns: The validation builder for chaining.
     public func ipv6(message: String = "Invalid IPv6 address") -> Self {
         addRule { value in
             // swiftlint:disable line_length
@@ -152,11 +166,14 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value is valid IPv6 CIDR
-    private func ipv6cidr(message: String = "Must be correct IPv6 cidr") -> Self {
+    /// Validates that the value is a valid IPv4 CIDR notation.
+    ///
+    /// - Parameter message: The error message returned when the value is not a valid IPv4 CIDR.
+    /// - Returns: The validation builder for chaining.
+    public func cidrv4(message: String = "Must be correct IPv4 cidr") -> Self {
         addRule { value in
             // swiftlint:disable line_length
-            let pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/
+            let pattern = /^(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\/(?:[0-9]|[12]\d|3[0-2])$/
             // swiftlint:enable line_length
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
@@ -168,22 +185,30 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value is valid CIDR
-    /// TODO Need to fix
-    public func cidr(message: String = "Must be correct CIDR") -> Self {
-        return ipv4cidr(message: message)
-            .ipv6cidr(message: message)
+    /// Validates that the value is a valid IPv6 CIDR notation.
+    ///
+    /// - Parameter message: The error message returned when the value is not a valid IPv6 CIDR.
+    /// - Returns: The validation builder for chaining.
+    public func cidrv6(message: String = "Must be correct IPv6 cidr") -> Self {
+        addRule { value in
+            // swiftlint:disable line_length
+            let pattern = /^((([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4})|(([0-9a-fA-F]{1,4}:){1,7}:)|(([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4})|(([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2})|(([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3})|(([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4})|(([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5})|([0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6}))|(:((:[0-9a-fA-F]{1,4}){1,7}|:))|(fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,})|(::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))|(([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])))\/(?:[0-9]|[1-9]\d|1[01]\d|12[0-8])$/
+            // swiftlint:enable line_length
+            let isMatch = (try? pattern.wholeMatch(in: value)) != nil
+
+            guard isMatch else {
+                return .error(message: message)
+            }
+
+            return .success(value: value)
+        }
     }
 
-    /// Add validation check that value is valid IP
-    /// TODO Need to fix
-    public func ip(message: String = "Invalid IP address") -> Self {
-        return ipv4cidr(message: message)
-            .ipv6cidr(message: message)
-    }
-
-    /// Add validation check that value is valid ISO date format (YYYY-MM-DD)
-    private func date(message: String = "Must be correct date YYYY-MM-DD") -> Self {
+    /// Validates that the value is a valid ISO date string in the format `YYYY-MM-DD`.
+    ///
+    /// - Parameter message: The error message returned when the value is not a valid ISO date.
+    /// - Returns: The validation builder for chaining.
+    public func isoDate(message: String = "Must be correct date YYYY-MM-DD") -> Self {
         addRule { value in
             // swiftlint:disable line_length
             let pattern = /^((\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\d|3[01])|(0[469]|11)-(0[1-9]|[12]\d|30)|(02)-(0[1-9]|1\d|2[0-8])))$/
@@ -198,7 +223,10 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value is valid email address
+    /// Validates that the value is a valid email address.
+    ///
+    /// - Parameter message: The error message returned when the value is not a valid email address.
+    /// - Returns: The validation builder for chaining.
     public func email(message: String = "Invalid email address") -> Self {
         addRule { value in
             // swiftlint:disable line_length
@@ -215,12 +243,13 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value is looks like E.164 phone number
-    /// https://en.wikipedia.org/wiki/E.164
-    /// > Note that it is not check that phone number really correct.
-    /// > If you want to correct phone number validation,
-    /// > consider to using 3rd party library, throung custom rule.
-    /// > Example: https://artycodingart.github.io/form-craft/examples/strong-phone-validation
+    /// Validates that the value resembles an E.164 phone number.
+    ///
+    /// Note: This is a basic format check only. For strict validation, consider a third‑party library via a custom rule.
+    /// See: https://en.wikipedia.org/wiki/E.164
+    ///
+    /// - Parameter message: The error message returned when the value is not a valid phone number.
+    /// - Returns: The validation builder for chaining.
     public func phoneNumber(message: String = "Must be a valid phone number") -> Self {
         addRule { value in
             let pattern = #"^\+?[0-9]{7,15}$"#
@@ -234,6 +263,12 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
+    /// Validates that the value matches the provided regular expression.
+    ///
+    /// - Parameters:
+    ///   - pattern: The regular expression tested against the value.
+    ///   - message: The error message returned when the value does not match the pattern.
+    /// - Returns: The validation builder for chaining.
     public func regex(pattern: Regex<Substring>, message: String = "Value is not valid") -> Self {
         var copySelf = self
 
@@ -250,8 +285,13 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         return copySelf
     }
 
-    /// Add validation check that user input value is equals to provided value
-    public func equals(to: String, message: String = "Values doesn't not match") -> Self {
+    /// Validates that the value equals the specified string.
+    ///
+    /// - Parameters:
+    ///   - to: The string to compare against.
+    ///   - message: The error message returned when the values do not match.
+    /// - Returns: The validation builder for chaining.
+    public func equals(to: String, message: String = "Values do not match") -> Self {
         addRule { value in
             if value != to {
                 return .error(message: message)
@@ -261,8 +301,13 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value is at least `min` characters length
-    public func minLength(
+    /// Validates that the value length is at least the specified minimum number of characters.
+    ///
+    /// - Parameters:
+    ///   - min: The minimum allowed character count.
+    ///   - message: The error message returned when the value is shorter than the minimum.
+    /// - Returns: The validation builder for chaining.
+    public func min(
         min: Int,
         message: String = "Must be %@ or more characters long"
     ) -> Self {
@@ -275,14 +320,38 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         }
     }
 
-    /// Add validation check that value is at most `max` characters length
-    public func maxLength(
+    /// Validates that the value length is at most the specified maximum number of characters.
+    ///
+    /// - Parameters:
+    ///   - max: The maximum allowed character count.
+    ///   - message: The error message returned when the value is longer than the maximum.
+    /// - Returns: The validation builder for chaining.
+    public func max(
         max: Int,
         message: String = "Must be %@ or fewer characters long"
     ) -> Self {
         addRule { value in
             if value.count > max {
                 return .error(message: String(format: message, "\(max)"))
+            }
+
+            return .success(value: value)
+        }
+    }
+
+    /// Validates that the value length equals the specified number of characters.
+    ///
+    /// - Parameters:
+    ///   - length: The required character count.
+    ///   - message: The error message returned when the value length does not match.
+    /// - Returns: The validation builder for chaining.
+    public func length(
+        length: Int,
+        message: String = "Must be exactly %@ characters long"
+    ) -> Self {
+        addRule { value in
+            if value.count != length {
+                return .error(message: String(format: message, "\(length)"))
             }
 
             return .success(value: value)
