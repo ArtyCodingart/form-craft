@@ -1,71 +1,310 @@
 # String
 
-- `min(num: Int, message: String = "Must be %@ or more characters long")`
-- `max(num: Int, message: String = "Must be %@ or fewer characters long")`
-- `length(num: Int, message: String = "Must be exactly %@ characters long")`
-- `notEmpty(message: String = "Must not be empty")`
-- `emoji(message: String = "Contains non-emoji characters")`
-- `url(message: String = "Must be valid URL")`
-- `nanoid(message: String = "Must be valid NanoID")`
-- `cuid(message: String = "Must be valid CUID")`
-- `cuid2(message: String = "Must be valid CUID2")`
-- `ulid(message: String = "Must be valid ULID")`
-- `regex(pattern: Regex, message: String = "Invalid format")`
-- `includes(string: String, message: String = "Must include %@")`
-- `startsWith(string: String, message: String = "Must start with %@")`
-- `endsWith(string: String, message: String = "Must end with %@")`
-- `cidr(message: String = "Invalid CIDR format")`
-- `equalTo(to: String, message: String = "Values do not match")`
+## notEmpty
 
-## IP Address
-- `ipv4(message: String = "Invalid IP address")`
-- `ipv6(message: String = "Invalid IP address")`
+Value must not be an empty string.
 
-## Email
-- `email(message: String = "Invalid email address")`
+**Parameters**
+- `message: String` – error message if empty
 
-## Transformations
-- `trim()` — removes leading and trailing whitespaces
-- `toLowerCase()` — transforms string to lowercase
-- `toUpperCase()` — transforms string to uppercase
-
-## Datetimes (ISO)
-- `datetime(message: String = "Invalid datetime format")`
 ```swift
-let datetime = FormCraftValidationRules()
+let notEmpty = FormCraftValidationRules()
   .string()
-  .datetime() // ISO 8601
+  .notEmpty()
 
-datetime.validate(value: "2025-01-01T00:00:00Z") // ✅ is valid
-datetime.validate(value: "2025_01_01T00:00:00Z") // ❌ is not valid
-```
-- `date(message: String = "Invalid date format")`
-```swift
-let date = FormCraftValidationRules()
-  .string()
-  .date() // ISO 8601 YYYY-MM-DD
-
-date.validate(value: "2025-01-01") // ✅ is valid
-date.validate(value: "2025_01_01") // ❌ is not valid
-```
-- `time(message: String = "Invalid time format")`
-```swift
-let time = FormCraftValidationRules()
-  .string()
-  .time() // ISO 8601 HH:MM:SS[.s+]
-
-time.validate(value: "00:00:00") // ✅ is valid
-time.validate(value: "00_00_00") // ❌ is not valid
-```
-- `duration(message: String = "Invalid duration format")`
-```swift
-let duration = FormCraftValidationRules()
-  .string()
-  .duration() // ISO 8601 P(n)Y(n)M(n)DT(n)H(n)M(n)S
-
-datetime.validate(value: "P3Y6M4DT12H30M5S") // ✅ is valid
-datetime.validate(value: "H_10_M_2") // ❌ is not valid
+notEmpty.validate(value: "text") // ✅ is valid
+notEmpty.validate(value: "")     // ❌ is not valid
 ```
 
-## UUID
-- `uuid(message: String = "Must be a valid UUID")`
+## trimmed
+
+No leading or trailing whitespace is allowed.
+
+**Parameters**
+- `message: String` – error message if whitespace is found
+
+```swift
+let trimmed = FormCraftValidationRules()
+  .string()
+  .trimmed()
+
+trimmed.validate(value: "hello")     // ✅ is valid
+trimmed.validate(value: " hello ")   // ❌ is not valid
+```
+
+## min
+
+Minimum length requirement.
+
+**Parameters**
+- `min: Int` – minimum number of characters  
+- `message: String` – error message if shorter
+
+```swift
+let minRule = FormCraftValidationRules()
+  .string()
+  .min(min: 3)
+
+minRule.validate(value: "hey") // ✅ is valid
+minRule.validate(value: "hi")  // ❌ is not valid
+```
+
+## max
+
+Maximum length limit.
+
+**Parameters**
+- `max: Int` – maximum number of characters  
+- `message: String` – error message if longer
+
+```swift
+let maxRule = FormCraftValidationRules()
+  .string()
+  .max(max: 5)
+
+maxRule.validate(value: "short")   // ✅ is valid
+maxRule.validate(value: "too long") // ❌ is not valid
+```
+
+## length
+
+Exact length requirement.
+
+**Parameters**
+- `length: Int` – required number of characters  
+- `message: String` – error message if length does not match
+
+```swift
+let lengthRule = FormCraftValidationRules()
+  .string()
+  .length(length: 6)
+
+lengthRule.validate(value: "ABC123") // ✅ is valid
+lengthRule.validate(value: "ABC12")  // ❌ is not valid
+```
+
+## equals
+
+Value must be equal to the given string.
+
+**Parameters**
+- `to: String` – the string to compare against  
+- `message: String` – error message if values differ
+
+```swift
+let equalsRule = FormCraftValidationRules()
+  .string()
+  .equals(to: "secret")
+
+equalsRule.validate(value: "secret") // ✅ is valid
+equalsRule.validate(value: "SECRET") // ❌ is not valid
+```
+
+## regex
+
+Validation against a custom regex pattern.
+
+**Parameters**
+- `pattern: Regex<Substring>` – regex to validate against  
+- `message: String` – error message if pattern does not match
+
+```swift
+let code4Digits = FormCraftValidationRules()
+  .string()
+  .regex(pattern: /^[0-9]{4}$/)
+
+code4Digits.validate(value: "1234") // ✅ is valid
+code4Digits.validate(value: "12a4") // ❌ is not valid
+```
+
+## cuid
+
+Value must be a valid CUID.
+
+**Parameters**
+- `message: String` – error message if invalid
+
+```swift
+let cuidRule = FormCraftValidationRules()
+  .string()
+  .cuid()
+
+cuidRule.validate(value: "ckjq8y3nj0001x9m5h8b9kqzg") // ✅ is valid
+cuidRule.validate(value: "invalid-cuid")              // ❌ is not valid
+```
+
+## cuid2
+
+Value must be a valid CUID2.
+
+**Parameters**
+- `message: String` – error message if invalid
+
+```swift
+let cuid2Rule = FormCraftValidationRules()
+  .string()
+  .cuid2()
+
+cuid2Rule.validate(value: "a1b2c3d4e5f6") // ✅ is valid
+cuid2Rule.validate(value: "A1B2C3")       // ❌ is not valid
+```
+
+## ulid
+
+Value must be a valid ULID.
+
+**Parameters**
+- `message: String` – error message if invalid
+
+```swift
+let ulidRule = FormCraftValidationRules()
+  .string()
+  .ulid()
+
+ulidRule.validate(value: "01ARZ3NDEKTSV4RRFFQ69G5FAV") // ✅ is valid
+ulidRule.validate(value: "01ARZ3NDEKTSV4RRFFQ69G5FA!") // ❌ is not valid
+```
+
+## uuid
+
+Value must be a valid UUID.
+
+**Parameters**
+- `message: String` – error message if invalid
+
+```swift
+let uuidRule = FormCraftValidationRules()
+  .string()
+  .uuid()
+
+uuidRule.validate(value: "123e4567-e89b-12d3-a456-426614174000") // ✅ is valid
+uuidRule.validate(value: "invalid-uuid")                        // ❌ is not valid
+```
+
+## nanoId
+
+Value must be a valid NanoID (21 chars).
+
+**Parameters**
+- `message: String` – error message if invalid
+
+```swift
+let nanoIdRule = FormCraftValidationRules()
+  .string()
+  .nanoId()
+
+nanoIdRule.validate(value: "abcde12345_fghij-67890") // ✅ is valid
+nanoIdRule.validate(value: "ABC-123")                // ❌ is not valid
+```
+
+## ipv4
+
+IPv4 address format validation.
+
+**Parameters**
+- `message: String` – error message if invalid
+
+```swift
+let ipv4Rule = FormCraftValidationRules()
+  .string()
+  .ipv4()
+
+ipv4Rule.validate(value: "192.168.0.1") // ✅ is valid
+ipv4Rule.validate(value: "999.168.0.1") // ❌ is not valid
+```
+
+## ipv6
+
+IPv6 address format validation.
+
+**Parameters**
+- `message: String` – error message if invalid
+
+```swift
+let ipv6Rule = FormCraftValidationRules()
+  .string()
+  .ipv6()
+
+ipv6Rule.validate(value: "2001:0db8:85a3:0000:0000:8a2e:0370:7334") // ✅ is valid
+ipv6Rule.validate(value: "2001:::7334")                            // ❌ is not valid
+```
+
+## cidrv4
+
+IPv4 CIDR notation validation.
+
+**Parameters**
+- `message: String` – error message if invalid
+
+```swift
+let cidrv4Rule = FormCraftValidationRules()
+  .string()
+  .cidrv4()
+
+cidrv4Rule.validate(value: "192.168.1.0/24") // ✅ is valid
+cidrv4Rule.validate(value: "192.168.1.0/33") // ❌ is not valid
+```
+
+## cidrv6
+
+IPv6 CIDR notation validation.
+
+**Parameters**
+- `message: String` – error message if invalid
+
+```swift
+let cidrv6Rule = FormCraftValidationRules()
+  .string()
+  .cidrv6()
+
+cidrv6Rule.validate(value: "2001:db8::/32")  // ✅ is valid
+cidrv6Rule.validate(value: "2001:db8::/129") // ❌ is not valid
+```
+
+## isoDate
+
+Date string in the format `YYYY-MM-DD` (leap-year aware).
+
+**Parameters**
+- `message: String` – error message if invalid
+
+```swift
+let isoDateRule = FormCraftValidationRules()
+  .string()
+  .isoDate()
+
+isoDateRule.validate(value: "2024-02-29") // ✅ is valid
+isoDateRule.validate(value: "2023-02-29") // ❌ is not valid
+```
+
+## email
+
+Email format validation.
+
+**Parameters**
+- `message: String` – error message if invalid
+
+```swift
+let emailRule = FormCraftValidationRules()
+  .string()
+  .email()
+
+emailRule.validate(value: "user@example.com") // ✅ is valid
+emailRule.validate(value: "user@")            // ❌ is not valid
+```
+
+## phoneNumber
+
+E.164-like phone number validation.
+
+**Parameters**
+- `message: String` – error message if invalid
+
+```swift
+let phoneRule = FormCraftValidationRules()
+  .string()
+  .e164phoneNumber()
+
+phoneRule.validate(value: "+14155552671") // ✅ is valid
+phoneRule.validate(value: "141-555-2671") // ❌ is not valid
+```

@@ -13,8 +13,6 @@ public struct FormCraftBooleanValidation: FormCraftValidationTypeRules {
 
     /// Validates that the value is `true`.
     ///
-    /// This is commonly used for "Terms & Conditions" or "Consent" checkboxes.
-    ///
     /// - Parameter message: The error message returned when the value is `false`.
     /// - Returns: The validation builder for chaining.
     public func checked(message: String = "Required") -> Self {

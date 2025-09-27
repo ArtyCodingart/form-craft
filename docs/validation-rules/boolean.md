@@ -1,12 +1,17 @@
 # Boolean
 
-- `checked(message: String = "Value required")` - Validates that boolean value is `true`
+## checked
 
-::: details Example
+Value must be `true`.  
+
+**Parameters**
+- `message: String` – error message if the value is `false`
+
 ```swift
-FormCraftValidationRules()
+let checked = FormCraftValidationRules()
   .boolean()
-  .checked() // [!code highlight]
-  .validate(value: false)
+  .checked()
+
+checked.validate(value: true)  // ✅ is valid
+checked.validate(value: false) // ❌ is not valid
 ```
-:::

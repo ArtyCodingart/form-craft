@@ -250,7 +250,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is not a valid phone number.
     /// - Returns: The validation builder for chaining.
-    public func phoneNumber(message: String = "Must be a valid phone number") -> Self {
+    public func e164phoneNumber(message: String = "Must be a valid phone number") -> Self {
         addRule { value in
             let pattern = #"^\+?[0-9]{7,15}$"#
             let predicate = NSPredicate(format: "SELF MATCHES %@", pattern)

@@ -48,18 +48,17 @@ export default defineConfig({
           { text: 'Boolean', link: '/validation-rules/boolean'},
           { text: 'Integer', link: '/validation-rules/integer' },
           { text: 'Decimal', link: '/validation-rules/decimal' },
-          { text: 'Array', link: '/validation-rules/array' },
-          { text: 'Custom Type', link: '/validation-rules/custom-type'}
+          // { text: 'Array', link: '/validation-rules/array' },
+          // { text: 'Custom Type', link: '/validation-rules/custom-type'}
         ]
       },
       {
         text: 'Examples',
         items: [
-          { text: 'Basic Form', link: '/' },
+          { text: 'Basic Form', link: '/examples/basic-form' },
           { text: 'Async Validation', link: '/' },
           { text: 'Cross-Field Validation', link: '/' },
-          { text: 'Handle Server Errors', link: '/'},
-          { text: 'Contextual Validation', link: '/examples/contextual-validation'},
+          { text: 'Handle Server Errors', link: '/'}
         ]
       }
     ],
