@@ -32,7 +32,7 @@ export default defineConfig({
       {
         text: 'API',
         items: [
-          { text: 'FormCraft', link: '/' },
+          { text: 'FormCraft', link: '/api/formcraft' },
           { text: 'FormCraftFields', link: '/' },
           { text: 'FormCraftField', link: '/' },
           { text: 'FormCraftView', link: '/' },
@@ -55,7 +55,7 @@ export default defineConfig({
       {
         text: 'Examples',
         items: [
-          { text: 'Basic Form', link: '/examples/login-form' },
+          { text: 'Login Form', link: '/examples/login-form' },
           { text: 'Initial Values', link: '/examples/initial-values' },
           { text: 'Server Errors', link: '/examples/server-errors'},
           { text: 'Server Validation', link: '/examples/server-validation' },
