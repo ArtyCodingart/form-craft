@@ -55,10 +55,10 @@ export default defineConfig({
       {
         text: 'Examples',
         items: [
-          { text: 'Basic Form', link: '/examples/basic-form' },
+          { text: 'Basic Form', link: '/examples/login-form' },
           { text: 'Initial Values', link: '/examples/initial-values' },
           { text: 'Server Errors', link: '/examples/server-errors'},
-          { text: 'Async Validation', link: '/' },
+          { text: 'Server Validation', link: '/examples/server-validation' },
           // { text: 'Cross-Field Validation', link: '/' },
         ]
       }

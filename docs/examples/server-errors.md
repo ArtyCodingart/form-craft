@@ -90,7 +90,7 @@ struct ServerErrorsFormView: View {
                     TextField("First name", text: field.$value)
                         .textFieldStyle(.roundedBorder)
                     Text(field.error)
-                        .foregroundStyle(.red) // по желанию
+                        .foregroundStyle(.red)
                 }
 
                 FormCraftControllerView(

@@ -67,6 +67,7 @@ struct InitialValuesFormView: View {
                     TextField("First name", text: field.$value)
                         .textFieldStyle(.roundedBorder)
                     Text(field.error)
+                        .foregroundStyle(.red)
                 }
 
                 FormCraftControllerView(
@@ -76,6 +77,7 @@ struct InitialValuesFormView: View {
                     TextField("Last name", text: field.$value)
                         .textFieldStyle(.roundedBorder)
                     Text(field.error)
+                        .foregroundStyle(.red)
                 }
             }
 

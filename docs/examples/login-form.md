@@ -1,4 +1,4 @@
-# Basic Form
+# Login Form
 
 ```swift
 import SwiftUI
@@ -42,6 +42,7 @@ struct LoginFormView: View {
                 TextField("Email", text: field.$value)
                     .textFieldStyle(.roundedBorder)
                 Text(field.error)
+                    .foregroundStyle(.red)
             }
 
             FormCraftControllerView(
@@ -51,6 +52,7 @@ struct LoginFormView: View {
                 TextField("Email", text: field.$value)
                     .textFieldStyle(.roundedBorder)
                 Text(field.error)
+                    .foregroundStyle(.red)
             }
         }
 
