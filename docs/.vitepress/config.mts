@@ -32,12 +32,11 @@ export default defineConfig({
       {
         text: 'API',
         items: [
-          { text: 'FormCraft', link: '/api/formcraft' },
-          { text: 'FormCraftFields', link: '/' },
-          { text: 'FormCraftField', link: '/' },
-          { text: 'FormCraftView', link: '/' },
-          { text: 'FormCraftControllerView', link: '/' },
-          { text: 'FormCraftProviderView', link: '/' },
+          { text: 'FormCraft', link: '/api/formCraft' },
+          { text: 'FormCraftFields', link: '/api/formCraftFields' },
+          { text: 'FormCraftField', link: '/api/formCraftField' },
+          { text: 'FormCraftView', link: '/api/formCraftView' },
+          { text: 'FormCraftControllerView', link: '/api/formCraftControllerView' }
         ]
       },
       {
@@ -48,8 +47,6 @@ export default defineConfig({
           { text: 'Boolean', link: '/validation-rules/boolean'},
           { text: 'Integer', link: '/validation-rules/integer' },
           { text: 'Decimal', link: '/validation-rules/decimal' },
-          // { text: 'Array', link: '/validation-rules/array' },
-          // { text: 'Custom Type', link: '/validation-rules/custom-type'}
         ]
       },
       {

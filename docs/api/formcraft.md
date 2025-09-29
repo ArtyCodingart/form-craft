@@ -1,79 +1,79 @@
 # FormCraft
-`FormCraft` - это центральный класс для работы с формами в SwiftUI.
-Он управляет значениями полей, выполняет их валидацию, обрабатывает ошибки и контролирует процесс отправки.
-Основная цель `FormCraft` - избавить разработчика от рутины: вы задаёте поля и правила, а библиотека автоматически обеспечивает корректность данных и отслеживает состояние формы.
+`FormCraft` - is the central class for working with forms in SwiftUI.
+It manages field values, performs their validation, handles errors, and controls the submission process.
+The main goal of `FormCraft` is to free the developer from routine: you define fields and rules, and the library automatically ensures data correctness and tracks the form state.
 
 
-## Конструктор
+## Constructor
 
 ```swift
 init(fields: Fields)
 ```
 
-### Аргументы
-- **fields: Fields** - структура полей, соответствующая `FormCraftFields`. В ней описываются все поля, их начальные значения и правила валидации.
+### Arguments
+- **fields: Fields** - a structure of fields conforming to `FormCraftFields`. It describes all fields, their initial values, and validation rules.
 
-## Свойства
+## Properties
 
-- **`fields: Fields`** - текущее состояние полей формы.  
+- **`fields: Fields`** - the current state of the form fields.  
 
-- **`registeredFields: [String]`** - список зарегистрированных имён полей. Используется для учёта полей, которые реально участвуют в валидации.  
+- **`registeredFields: [String]`** - the list of registered field names. Used to track fields that actually participate in validation.  
 
-- **`focusedFields: [String]`** - набор имён полей, которые находятся в фокусе (например, активные текстовые поля).  
+- **`focusedFields: [String]`** - the set of field names that are currently focused (for example, active text fields).  
 
-- **`errorFields: [String: String]`** - словарь ошибок, ключ - имя поля, значение - текст ошибки.  
+- **`errorFields: [String: String]`** - a dictionary of errors, where the key is the field name and the value is the error message.  
 
-- **`validationFields: [Key: Task<Void, Never>]`** - словарь активных задач валидации.  
+- **`validationFields: [Key: Task<Void, Never>]`** - a dictionary of active validation tasks.  
 
-- **`validatedFields: [Key: Sendable]`** - словарь успешно провалидированных значений.  
+- **`validatedFields: [Key: Sendable]`** - a dictionary of successfully validated values.  
 
-- **`formState: FormCraftFormState`** - общее состояние формы.  
-  Содержит:  
+- **`formState: FormCraftFormState`** - the overall form state.  
+  Contains:  
 
-  | Свойство | Тип   | Назначение |
+  | Property | Type   | Description |
   |---|---|---|
-  | `isSubmitting` | `Bool` | Находится ли форма в процессе «отправки». Обычно используют для дизейбла кнопки «Отправить» и показа индикатора загрузки. |  
+  | `isSubmitting` | `Bool` | Indicates whether the form is in the process of "submitting". Commonly used to disable the "Submit" button and show a loading indicator. |  
 
-## Методы
+## Methods
 
-### Регистрация
+### Registration
 
-- **`registerField(key:name:)`** - добавляет поле в список отслеживаемых.  
-- **`unregisterField(key:)`** - убирает поле из списка.  
-
----
-
-### Установка значений
-
-- **`setValue(key:value:config:)`** - меняет значение одного поля.  
-  Если в `config` указано `shouldValidate = true`, поле сразу проверяется.  
-
-- **`setValues(values:)`** - обновляет сразу несколько полей за один раз.  
+- **`registerField(key:name:)`** - adds a field to the list of tracked ones.  
+- **`unregisterField(key:)`** - removes a field from the list.  
 
 ---
 
-### Ошибки
+### Setting values
 
-- **`setError(key:message:)`** - назначает ошибку конкретному полю.  
-- **`setErrors([String:String])`** - устанавливает ошибки по именам.  
-- **`setErrors([Key:String])`** - устанавливает ошибки по ключам.  
-- **`clearError(key:)`** - очищает ошибку у одного поля.  
-- **`clearErrors()`** - очищает все ошибки.  
+- **`setValue(key:value:config:)`** - changes the value of a single field.  
+  If `shouldValidate = true` is specified in `config`, the field is validated immediately.  
 
----
-
-### Валидация
-
-- **`validateField(key:)`** - асинхронно проверяет одно поле.  
-- **`validateFields()`** - проверяет все поля и возвращает `true`, если ошибок нет.  
+- **`setValues(values:)`** - updates several fields at once.  
 
 ---
 
-### Отправка формы
+### Errors
 
-- **`handleSubmit(onSuccess:)`** - возвращает замыкание для кнопки «Отправить».  
-  При вызове:  
-  1. ставит `isSubmitting = true`;  
-  2. валидирует все поля;  
-  3. если всё ок - вызывает `onSuccess` с валидными данными;  
-  4. сбрасывает `isSubmitting = false`.  
+- **`setError(key:message:)`** - sets an error for a specific field.  
+- **`setErrors([String:String])`** - sets errors by field names.  
+- **`setErrors([Key:String])`** - sets errors by field keys.  
+- **`clearError(key:)`** - clears the error of a specific field.  
+- **`clearErrors()`** - clears all errors.  
+
+---
+
+### Validation
+
+- **`validateField(key:)`** - asynchronously validates a single field.  
+- **`validateFields()`** - validates all fields and returns `true` if there are no errors.  
+
+---
+
+### Form submission
+
+- **`handleSubmit(onSuccess:)`** - returns a closure for the "Submit" button.  
+  When called:  
+  1. sets `isSubmitting = true`;  
+  2. validates all fields;  
+  3. if everything is ok - calls `onSuccess` with valid data;  
+  4. resets `isSubmitting = false`.  
