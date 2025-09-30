@@ -21,11 +21,11 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     /// - Returns: The validation builder for chaining.
     public func gt(
         num: Decimal,
-        message: String = "Must be greater than %@"
+        message: ((Decimal) -> LocalizedStringResource)?
     ) -> Self {
         addRule { value in
             if value <= num {
-                return .error(message: String(format: message, "\(num)"))
+                return .error(message: message?(num) ?? localizations.gt(String(describing: num)))
             }
 
             return .success(value: value)
@@ -40,11 +40,11 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     /// - Returns: The validation builder for chaining.
     public func gte(
         num: Decimal,
-        message: String = "Must be at least %@"
+        message: ((Decimal) -> LocalizedStringResource)?
     ) -> Self {
         addRule { value in
             if value < num {
-                return .error(message: String(format: message, "\(num)"))
+                return .error(message: message?(num) ?? localizations.gte(String(describing: num)))
             }
 
             return .success(value: value)
@@ -59,11 +59,11 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     /// - Returns: The validation builder for chaining.
     public func lt(
         num: Decimal,
-        message: String = "Must be less than %@"
+        message: ((Decimal) -> LocalizedStringResource)?
     ) -> Self {
         addRule { value in
             if value >= num {
-                return .error(message: String(format: message, "\(num)"))
+                return .error(message: message?(num) ?? localizations.lt(String(describing: num)))
             }
 
             return .success(value: value)
@@ -78,11 +78,11 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     /// - Returns: The validation builder for chaining.
     public func lte(
         num: Decimal,
-        message: String = "Must not be more than %@"
+        message: LocalizedStringResource?
     ) -> Self {
         addRule { value in
             if value > num {
-                return .error(message: String(format: message, "\(num)"))
+                return .error(message: message ?? localizations.lte(String(describing: num)))
             }
 
             return .success(value: value)
@@ -94,11 +94,11 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     /// - Parameter message: The error message returned when the value is not positive.
     /// - Returns: The validation builder for chaining.
     public func positive(
-        message: String = "Must be positive"
+        message: LocalizedStringResource?
     ) -> Self {
         addRule { value in
             if value <= 0 {
-                return .error(message: String(format: message))
+                return .error(message: message ?? localizations.positive)
             }
 
             return .success(value: value)
@@ -110,11 +110,11 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     /// - Parameter message: The error message returned when the value is negative.
     /// - Returns: The validation builder for chaining.
     public func nonNegative(
-        message: String = "Must not be negative"
+        message: LocalizedStringResource?
     ) -> Self {
         addRule { value in
             if value < 0 {
-                return .error(message: String(format: message))
+                return .error(message: message ?? localizations.nonNegative)
             }
 
             return .success(value: value)
@@ -126,11 +126,11 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     /// - Parameter message: The error message returned when the value is not negative.
     /// - Returns: The validation builder for chaining.
     public func negative(
-        message: String = "Must be negative"
+        message: LocalizedStringResource?
     ) -> Self {
         addRule { value in
             if value >= 0 {
-                return .error(message: String(format: message))
+                return .error(message: message ?? localizations.negative)
             }
 
             return .success(value: value)
@@ -142,11 +142,11 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     /// - Parameter message: The error message returned when the value is positive.
     /// - Returns: The validation builder for chaining.
     public func nonPositive(
-        message: String = "Must not be positive"
+        message: LocalizedStringResource?
     ) -> Self {
         addRule { value in
             if value > 0 {
-                return .error(message: String(format: message))
+                return .error(message: message ?? localizations.nonPositive)
             }
 
             return .success(value: value)
@@ -161,18 +161,20 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     /// - Returns: The validation builder for chaining.
     public func multipleOf(
         mult: Decimal,
-        message: String = "Must be a multiple of %@"
+        message: ((Decimal) -> LocalizedStringResource)?
     ) -> Self {
         addRule { value in
+            let errorMessage = message?(mult) ?? localizations.multipleOf(String(describing: mult))
+
             guard mult != 0 else {
-                return .error(message: String(format: message, "\(value)"))
+                return .error(message: errorMessage)
             }
 
             let quotient = value / mult
             let truncated = Decimal(Double(trunc(Double(truncating: quotient as NSNumber))))
 
             if value - (mult * truncated) != 0 {
-                return .error(message: String(format: message, "\(value)"))
+                return .error(message: errorMessage)
             }
 
             return .success(value: value)

@@ -1,3 +1,5 @@
+import SwiftUI
+
 public extension FormCraftValidationRules {
     /// Creates a validation builder for `Bool` values.
     ///
@@ -15,10 +17,10 @@ public struct FormCraftBooleanValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is `false`.
     /// - Returns: The validation builder for chaining.
-    public func checked(message: String = "Required") -> Self {
+    public func checked(message: LocalizedStringResource?) -> Self {
         addRule { value in
             if !value {
-                return .error(message: message)
+                return .error(message: message ?? localizations.required)
             }
 
             return .success(value: value)

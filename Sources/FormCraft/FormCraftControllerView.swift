@@ -20,7 +20,7 @@ private class FormCraftControllerVM: ObservableObject {
 public struct FieldState<Value> {
     @Binding public var value: Value
     public var isError: Bool
-    public var error: String
+    public var error: LocalizedStringResource
     public var isValidating: Bool
 }
 
@@ -50,13 +50,13 @@ public struct FormCraftControllerView<
                 formConfig.fields[keyPath: key].value = $0
             }
         )
-        let error = formConfig.errorFields.first(where: { $0.key == formField.name })?.value ?? ""
+        let error = formConfig.errorFields.first(where: { $0.key == formField.name })?.value
         let isValidating = formConfig.validationFields[key]
 
         return FieldState(
             value: binding,
-            isError: !error.isEmpty,
-            error: error,
+            isError: error != nil,
+            error: error ?? "",
             isValidating: isValidating != nil
         )
     }
@@ -93,8 +93,6 @@ public struct FormCraftControllerView<
                     return
                 }
                 formConfig.focusedFields.removeAll(where: { $0 == formField.name })
-
-                Task { await formConfig.validateField(key: key) }
             }
             .onChange(of: formConfig.fields[keyPath: key].value) { _ in
                 if !isFocused {

@@ -24,7 +24,7 @@ public extension FormCraftValidationRules {
     ) async -> FormCraftValidationResponse<(repeat ((each Rule).Value)?)> {
         let results = await (repeat (each rules).validate(raw: value))
 
-        var errorMessage = "Unexpected error in union validation"
+        var errorMessage: LocalizedStringResource = .unexpectedError
         for result in repeat each results {
             switch result {
             case .success:

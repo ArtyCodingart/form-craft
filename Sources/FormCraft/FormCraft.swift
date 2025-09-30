@@ -10,14 +10,16 @@ public protocol FormCraftConfig: ObservableObject {
     var fields: Fields { get set }
     var registeredFields: [Name] { get set }
     var focusedFields: [String] { get set }
-    var errorFields: [Name: String] { get set }
+    var errorFields: [Name: LocalizedStringResource] { get set }
     var validationFields: [Key: Task<Void, Never>] { get set }
     var formState: FormCraftFormState { get set }
 
     func registerField(key: Key, name: Name)
     func unregisterField(key: Key)
-    func setError(key: Key, message: String)
+    func setError(key: Key, message: LocalizedStringResource)
+    func setErrors(errors: [Name: LocalizedStringResource])
     func setErrors(errors: [Name: String])
+    func setErrors(errors: [Key: LocalizedStringResource])
     func setErrors(errors: [Key: String])
     func clearError(key: Key)
     func clearErrors()
@@ -42,14 +44,14 @@ public protocol FormCraftFieldConfigurable {
     var delayValidation: FormCraftDelayValidation { get }
     var rule: (_ value: Value) async -> FormCraftValidationResponse<ValidatedValue> { get }
 
-    func validate() async -> (ValidatedValue?, String?)
+    func validate() async -> (ValidatedValue?, LocalizedStringResource?)
 }
 
 public enum FormCraftValidationResponse<Value: Sendable>: Error {
     case success(value: Value)
-    case error(message: String)
+    case error(message: LocalizedStringResource)
 
-    public var errorMessage: String? {
+    public var errorMessage: LocalizedStringResource? {
         if case .error(let message) = self {
             return message
         }
@@ -104,12 +106,12 @@ public struct FormCraftValidatedFields<Fields> {
 
 public protocol FormCraftFields {
     @MainActor
-    func refine(form: FormCraft<Self>) async -> [FormCraft<Self>.Key: String?]
+    func refine(form: FormCraft<Self>) async -> [FormCraft<Self>.Key: LocalizedStringResource?]
 }
 
 public extension FormCraftFields {
     @MainActor
-    func refine(form: FormCraft<Self>) async -> [FormCraft<Self>.Key: String?] {
+    func refine(form: FormCraft<Self>) async -> [FormCraft<Self>.Key: LocalizedStringResource?] {
         [:]
     }
 }
@@ -144,7 +146,7 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
     @Published public var fields: Fields
     public var registeredFields: [Name] = []
     @Published public var focusedFields: [String] = []
-    @Published public var errorFields: [Name: String] = [:]
+    @Published public var errorFields: [Name: LocalizedStringResource] = [:]
     @Published public var validationFields: [Key: Task<Void, Never>] = [:]
     @Published public var formState = FormCraftFormState(
         isSubmitting: false
@@ -178,19 +180,29 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         registeredFields.removeAll(where: { $0 == name })
     }
 
-    public func setError(key: Key, message: String) {
+    public func setError(key: Key, message: LocalizedStringResource) {
         guard let name = fieldNameByKeyPath[key] else { return }
 
         errorFields[name] = message
     }
 
-    public func setErrors(errors: [String: String]) {
+    public func setErrors(errors: [String: LocalizedStringResource]) {
         errorFields = errors
+    }
+
+    public func setErrors(errors: [String: String]) {
+        errorFields = errors.mapValues { .init(stringLiteral: $0) }
+    }
+
+    public func setErrors(errors: [Key: LocalizedStringResource]) {
+        errors.forEach { error in
+            setError(key: error.key, message: error.value)
+        }
     }
 
     public func setErrors(errors: [Key: String]) {
         errors.forEach { error in
-            setError(key: error.key, message: error.value)
+            setError(key: error.key, message: .init(stringLiteral: error.value))
         }
     }
 
@@ -348,7 +360,7 @@ public struct FormCraftField<Value: Equatable & Sendable, ValidatedValue: Sendab
         self.rule = rule
     }
 
-    public func validate() async -> (ValidatedValue?, String?) {
+    public func validate() async -> (ValidatedValue?, LocalizedStringResource?) {
         let validationResponse = await rule(value)
 
         switch validationResponse {

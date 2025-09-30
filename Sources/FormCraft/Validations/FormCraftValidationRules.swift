@@ -4,20 +4,23 @@ public protocol FormCraftValidationTypeRules {
     typealias Rule = (_ value: Value) async -> FormCraftValidationResponse<Value>
 
     var rules: [Rule] { get set }
+    var localizations: FormCraftLocalizations { get }
 
     func validate(value: Value) async -> FormCraftValidationResponse<Value>
 }
 
 public extension FormCraftValidationTypeRules {
+    var localizations: FormCraftLocalizations {
+        FormCraftLocalizations()
+    }
+
     func validate(raw: Any?) async -> FormCraftValidationResponse<Value> {
         guard let typed = raw as? Value else {
             if raw == nil {
-                return .error(message: "Value required")
+                return .error(message: localizations.required)
             }
 
-            return .error(message:
-                "Invalid type: expected \(Value.self), received \(type(of: raw))"
-            )
+            return .error(message: .invalidType(String(describing: Value.self), "\(type(of: raw))"))
         }
 
         return await validate(value: typed)

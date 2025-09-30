@@ -17,10 +17,12 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is empty.
     /// - Returns: The validation builder for chaining.
-    public func notEmpty(message: String = "Must not be empty") -> Self {
+    public func notEmpty(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             if value.isEmpty {
-                return .error(message: message)
+                return .error(message: message ?? localizations.required)
             }
 
             return .success(value: value)
@@ -33,11 +35,13 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when leading or trailing whitespace is present.
     /// - Returns: The validation builder for chaining.
-    public func trimmed(message: String = "Must not start or end with whitespace characters") -> Self {
+    public func trimmed(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             let t = value.trimmingCharacters(in: .whitespacesAndNewlines)
 
-            return (t == value) ? .success(value: value) : .error(message: message)
+            return (t == value) ? .success(value: value) : .error(message: message ?? localizations.trimmed)
         }
     }
 
@@ -45,13 +49,15 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is not a valid CUID.
     /// - Returns: The validation builder for chaining.
-    public func cuid(message: String = "Must be valid CUID") -> Self {
+    public func cuid(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             let pattern = /^c[^\s-]{8,}$/
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message)
+                return .error(message: message ?? localizations.cuid)
             }
 
             return .success(value: value)
@@ -62,13 +68,15 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is not a valid CUID2.
     /// - Returns: The validation builder for chaining.
-    public func cuid2(message: String = "Must be valid CUID2") -> Self {
+    public func cuid2(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             let pattern = /^[0-9a-z]+$/
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message)
+                return .error(message: message ?? localizations.cuid2)
             }
 
             return .success(value: value)
@@ -79,13 +87,15 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is not a valid ULID.
     /// - Returns: The validation builder for chaining.
-    public func ulid(message: String = "Must be valid ULID") -> Self {
+    public func ulid(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             let pattern = /^[0-9A-HJKMNP-TV-Z]{26}$/
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message)
+                return .error(message: message ?? localizations.ulid)
             }
 
             return .success(value: value)
@@ -96,7 +106,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is not a valid UUID.
     /// - Returns: The validation builder for chaining.
-    public func uuid(message: String = "Must be valid UUID") -> Self {
+    public func uuid(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             // swiftlint:disable line_length
             let pattern = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
@@ -104,7 +116,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message)
+                return .error(message: message ?? localizations.uuid)
             }
 
             return .success(value: value)
@@ -115,13 +127,15 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is not a valid NanoID.
     /// - Returns: The validation builder for chaining.
-    public func nanoId(message: String = "Must be valid NanoID") -> Self {
+    public func nanoId(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             let pattern = /^[a-z0-9_-]{21}$/
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message)
+                return .error(message: message ?? localizations.nanoId)
             }
 
             return .success(value: value)
@@ -132,7 +146,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is not a valid IPv4 address.
     /// - Returns: The validation builder for chaining.
-    public func ipv4(message: String = "Invalid IPv4 address") -> Self {
+    public func ipv4(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             // swiftlint:disable line_length
             let pattern = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/
@@ -140,7 +156,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message)
+                return .error(message: message ?? localizations.ipv4)
             }
 
             return .success(value: value)
@@ -151,7 +167,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is not a valid IPv6 address.
     /// - Returns: The validation builder for chaining.
-    public func ipv6(message: String = "Invalid IPv6 address") -> Self {
+    public func ipv6(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             // swiftlint:disable line_length
             let pattern = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/
@@ -159,7 +177,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message)
+                return .error(message: message ?? localizations.ipv6)
             }
 
             return .success(value: value)
@@ -170,7 +188,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is not a valid IPv4 CIDR.
     /// - Returns: The validation builder for chaining.
-    public func cidrv4(message: String = "Must be correct IPv4 cidr") -> Self {
+    public func cidrv4(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             // swiftlint:disable line_length
             let pattern = /^(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\/(?:[0-9]|[12]\d|3[0-2])$/
@@ -178,7 +198,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message)
+                return .error(message: message ?? localizations.cidrv4)
             }
 
             return .success(value: value)
@@ -189,7 +209,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is not a valid IPv6 CIDR.
     /// - Returns: The validation builder for chaining.
-    public func cidrv6(message: String = "Must be correct IPv6 cidr") -> Self {
+    public func cidrv6(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             // swiftlint:disable line_length
             let pattern = /^((([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4})|(([0-9a-fA-F]{1,4}:){1,7}:)|(([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4})|(([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2})|(([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3})|(([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4})|(([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5})|([0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6}))|(:((:[0-9a-fA-F]{1,4}){1,7}|:))|(fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,})|(::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))|(([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])))\/(?:[0-9]|[1-9]\d|1[01]\d|12[0-8])$/
@@ -197,7 +219,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message)
+                return .error(message: message ?? localizations.cidrv6)
             }
 
             return .success(value: value)
@@ -208,7 +230,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is not a valid ISO date.
     /// - Returns: The validation builder for chaining.
-    public func isoDate(message: String = "Must be correct date YYYY-MM-DD") -> Self {
+    public func isoDate(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             // swiftlint:disable line_length
             let pattern = /^((\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\d|3[01])|(0[469]|11)-(0[1-9]|[12]\d|30)|(02)-(0[1-9]|1\d|2[0-8])))$/
@@ -216,7 +240,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message)
+                return .error(message: message ?? localizations.isoDate)
             }
 
             return .success(value: value)
@@ -227,7 +251,9 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is not a valid email address.
     /// - Returns: The validation builder for chaining.
-    public func email(message: String = "Invalid email address") -> Self {
+    public func email(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             // swiftlint:disable line_length
             let pattern = #"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"#
@@ -236,7 +262,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let predicate = NSPredicate(format: "SELF MATCHES %@", pattern)
 
             guard predicate.evaluate(with: value) else {
-                return .error(message: message)
+                return .error(message: message ?? localizations.email)
             }
 
             return .success(value: value)
@@ -250,13 +276,15 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///
     /// - Parameter message: The error message returned when the value is not a valid phone number.
     /// - Returns: The validation builder for chaining.
-    public func e164phoneNumber(message: String = "Must be a valid phone number") -> Self {
+    public func e164phoneNumber(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         addRule { value in
             let pattern = #"^\+?[0-9]{7,15}$"#
             let predicate = NSPredicate(format: "SELF MATCHES %@", pattern)
 
             guard predicate.evaluate(with: value) else {
-                return .error(message: message)
+                return .error(message: message ?? localizations.e164phoneNumber)
             }
 
             return .success(value: value)
@@ -269,14 +297,17 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///   - pattern: The regular expression tested against the value.
     ///   - message: The error message returned when the value does not match the pattern.
     /// - Returns: The validation builder for chaining.
-    public func regex(pattern: Regex<Substring>, message: String = "Value is not valid") -> Self {
+    public func regex(
+        pattern: Regex<Substring>,
+        message: LocalizedStringResource? = nil
+    ) -> Self {
         var copySelf = self
 
         copySelf.rules.append { value in
             let isMatches = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatches else {
-                return .error(message: message)
+                return .error(message: message ?? localizations.regex)
             }
 
             return .success(value: value)
@@ -291,10 +322,13 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ///   - to: The string to compare against.
     ///   - message: The error message returned when the values do not match.
     /// - Returns: The validation builder for chaining.
-    public func equals(to: String, message: String = "Values do not match") -> Self {
+    public func equals(
+        to: String,
+        message: ((String, String) -> LocalizedStringResource)? = nil
+    ) -> Self {
         addRule { value in
             if value != to {
-                return .error(message: message)
+                return .error(message: message?(value, to) ?? localizations.equals(value, to))
             }
 
             return .success(value: value)
@@ -309,11 +343,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     /// - Returns: The validation builder for chaining.
     public func min(
         min: Int,
-        message: String = "Must be %@ or more characters long"
+        message: ((Int) -> LocalizedStringResource)? = nil
     ) -> Self {
         addRule { value in
             if value.count < min {
-                return .error(message: String(format: message, "\(min)"))
+                return .error(message: message?(min) ?? localizations.minLength(String(describing: min)))
             }
 
             return .success(value: value)
@@ -328,11 +362,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     /// - Returns: The validation builder for chaining.
     public func max(
         max: Int,
-        message: String = "Must be %@ or fewer characters long"
+        message: ((Int) ->LocalizedStringResource)? = nil
     ) -> Self {
         addRule { value in
             if value.count > max {
-                return .error(message: String(format: message, "\(max)"))
+                return .error(message: message?(max) ?? localizations.maxLength(String(describing: max)))
             }
 
             return .success(value: value)
@@ -347,11 +381,11 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     /// - Returns: The validation builder for chaining.
     public func length(
         length: Int,
-        message: String = "Must be exactly %@ characters long"
+        message: ((Int) -> LocalizedStringResource)? = nil
     ) -> Self {
         addRule { value in
             if value.count != length {
-                return .error(message: String(format: message, "\(length)"))
+                return .error(message: message?(length) ?? localizations.length(String(describing: length)))
             }
 
             return .success(value: value)
