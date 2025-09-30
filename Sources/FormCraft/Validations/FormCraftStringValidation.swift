@@ -391,4 +391,63 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             return .success(value: value)
         }
     }
+
+    public func startsWith(
+        prefix: String,
+        message: ((String) -> LocalizedStringResource)? = nil
+    ) -> Self {
+        addRule { value in
+            if !value.hasPrefix(prefix) {
+                return .error(message: message?(prefix) ?? localizations.startsWith(prefix))
+            }
+
+            return .success(value: value)
+        }
+    }
+
+    public func endsWith(
+        suffix: String,
+        message: ((String) -> LocalizedStringResource)? = nil
+    ) -> Self {
+        addRule { value in
+            if !value.hasSuffix(suffix) {
+                return .error(message: message?(suffix) ?? localizations.endsWith(suffix))
+            }
+            return .success(value: value)
+        }
+    }
+
+    public func includes(
+        substring: String,
+        message: ((String) -> LocalizedStringResource)? = nil
+    ) -> Self {
+        addRule { value in
+            if !value.contains(substring) {
+                return .error(message: message?(substring) ?? localizations.includes(substring))
+            }
+            return .success(value: value)
+        }
+    }
+
+    public func uppercase(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
+        addRule { value in
+            if value != value.uppercased() {
+                return .error(message: message ?? localizations.uppercase)
+            }
+            return .success(value: value)
+        }
+    }
+
+    public func lowercase(
+        message: LocalizedStringResource? = nil
+    ) -> Self {
+        addRule { value in
+            if value != value.lowercased() {
+                return .error(message: message ?? localizations.lowercase)
+            }
+            return .success(value: value)
+        }
+    }
 }

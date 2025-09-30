@@ -308,3 +308,20 @@ let phoneRule = FormCraftValidationRules()
 phoneRule.validate(value: "+14155552671") // ✅ is valid
 phoneRule.validate(value: "141-555-2671") // ❌ is not valid
 ```
+
+## startsWith
+
+Value must start with the given prefix.
+
+**Parameters**
+- `prefix: String` – required starting substring  
+- `message: ((String) -> LocalizedStringResource)?` – optional custom error message builder
+
+```swift
+let startsWithRule = FormCraftValidationRules()
+  .string()
+  .startsWith(prefix: "Hello")
+
+startsWithRule.validate(value: "Hello World") // ✅ is valid
+startsWithRule.validate(value: "World Hello") // ❌ is not valid
+```

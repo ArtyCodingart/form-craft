@@ -36,6 +36,11 @@ public struct FormCraftLocalizations {
     public var minLength: (String) -> LocalizedStringResource
     public var maxLength: (String) -> LocalizedStringResource
     public var length: (String) -> LocalizedStringResource
+    public var startsWith: (String) -> LocalizedStringResource
+    public var endsWith: (String) -> LocalizedStringResource
+    public var includes: (String) -> LocalizedStringResource
+    public var uppercase: LocalizedStringResource
+    public var lowercase: LocalizedStringResource
 
     public init(
         required: LocalizedStringResource? = nil,
@@ -65,7 +70,12 @@ public struct FormCraftLocalizations {
         equals: ((String, String) -> LocalizedStringResource)? = nil,
         minLength: ((String) -> LocalizedStringResource)? = nil,
         maxLength: ((String) -> LocalizedStringResource)? = nil,
-        length: ((String) -> LocalizedStringResource)? = nil
+        length: ((String) -> LocalizedStringResource)? = nil,
+        startsWith: ((String) -> LocalizedStringResource)? = nil,
+        endsWith: ((String) -> LocalizedStringResource)? = nil,
+        includes: ((String) -> LocalizedStringResource)? = nil,
+        uppercase: LocalizedStringResource? = nil,
+        lowercase: LocalizedStringResource? = nil
     ) {
         self.required = required ?? .required
         self.gt = gt ?? { .gt($0) }
@@ -95,5 +105,10 @@ public struct FormCraftLocalizations {
         self.minLength = minLength ?? { .minLength($0) }
         self.maxLength = maxLength ?? { .maxLength($0) }
         self.length = length ?? { .length($0) }
+        self.startsWith = startsWith ?? { .startsWith($0) }
+        self.endsWith = endsWith ?? { .endsWith($0) }
+        self.includes = includes ?? { .includes($0) }
+        self.uppercase = uppercase ?? .uppercase 
+        self.lowercase = lowercase ?? .lowercase
     }
 }
