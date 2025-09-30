@@ -21,7 +21,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
     /// - Returns: The validation builder for chaining.
     public func gt(
         num: Int,
-        message: ((Int) -> LocalizedStringResource)?
+        message: ((Int) -> LocalizedStringResource)? = nil
     ) -> Self {
         addRule { value in
             if value <= num {
@@ -40,7 +40,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
     /// - Returns: The validation builder for chaining.
     public func gte(
         num: Int,
-        message: ((Int) -> LocalizedStringResource)?
+        message: ((Int) -> LocalizedStringResource)? = nil
     ) -> Self {
         addRule { value in
             if value < num {
@@ -59,7 +59,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
     /// - Returns: The validation builder for chaining.
     public func lt(
         num: Int,
-        message: ((Int) -> LocalizedStringResource)?
+        message: ((Int) -> LocalizedStringResource)? = nil
     ) -> Self {
         addRule { value in
             if value >= num {
@@ -78,7 +78,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
     /// - Returns: The validation builder for chaining.
     public func lte(
         num: Int,
-        message: ((Int) -> LocalizedStringResource)?
+        message: ((Int) -> LocalizedStringResource)? = nil
     ) -> Self {
         addRule { value in
             if value > num {
@@ -94,7 +94,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
     /// - Parameter message: The error message returned when the value is not positive.
     /// - Returns: The validation builder for chaining.
     public func positive(
-        message: LocalizedStringResource?
+        message: LocalizedStringResource? = nil
     ) -> Self {
         addRule { value in
             if value <= 0 {
@@ -110,7 +110,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
     /// - Parameter message: The error message returned when the value is negative.
     /// - Returns: The validation builder for chaining.
     public func nonNegative(
-        message: LocalizedStringResource?
+        message: LocalizedStringResource? = nil
     ) -> Self {
         addRule { value in
             if value < 0 {
@@ -126,7 +126,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
     /// - Parameter message: The error message returned when the value is not negative.
     /// - Returns: The validation builder for chaining.
     public func negative(
-        message: LocalizedStringResource?
+        message: LocalizedStringResource? = nil
     ) -> Self {
         addRule { value in
             if value >= 0 {
@@ -142,7 +142,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
     /// - Parameter message: The error message returned when the value is positive.
     /// - Returns: The validation builder for chaining.
     public func nonPositive(
-        message: LocalizedStringResource?
+        message: LocalizedStringResource? = nil
     ) -> Self {
         addRule { value in
             if value > 0 {
@@ -161,7 +161,7 @@ public struct FormCraftIntegerValidation: FormCraftValidationTypeRules {
     /// - Returns: The validation builder for chaining.
     public func multipleOf(
         num: Int,
-        message: ((Int) -> LocalizedStringResource)?
+        message: ((Int) -> LocalizedStringResource)? = nil
     ) -> Self {
         addRule { value in
             if num == 0 || value % num != 0 {

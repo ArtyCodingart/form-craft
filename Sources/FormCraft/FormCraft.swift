@@ -151,11 +151,11 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
     @Published public var formState = FormCraftFormState(
         isSubmitting: false
     )
-    @Published public var validatedFields: [Key: Sendable] = [:]
 
     private let initialFields: Fields
     private var fieldNameByKeyPath: [Key: String] = [:]
     private var validationTask: Task<Void, Never>?
+    private var validatedFields: [Key: Sendable] = [:]
 
     public init(fields: Fields) {
         self.initialFields = fields
