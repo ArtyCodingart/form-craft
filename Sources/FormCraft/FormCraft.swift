@@ -10,17 +10,15 @@ public protocol FormCraftConfig: ObservableObject {
     var fields: Fields { get set }
     var registeredFields: [Name] { get set }
     var focusedFields: [String] { get set }
-    var errorFields: [Name: LocalizedStringResource] { get set }
+    var errorFields: [Name: FormCraftFailure] { get set }
     var validationFields: [Key: Task<Void, Never>] { get set }
     var formState: FormCraftFormState { get set }
 
     func registerField(key: Key, name: Name)
     func unregisterField(key: Key)
-    func setError(key: Key, message: LocalizedStringResource)
-    func setErrors(errors: [Name: LocalizedStringResource])
-    func setErrors(errors: [Name: String])
-    func setErrors(errors: [Key: LocalizedStringResource])
-    func setErrors(errors: [Key: String])
+    func setError(key: Key, errors: FormCraftFailure)
+    func setErrors(errors: [Key: FormCraftFailure])
+    func setErrors(errors: [Name: [String]])
     func clearError(key: Key)
     func clearErrors()
     func validateField(key: Key) async
@@ -44,16 +42,28 @@ public protocol FormCraftFieldConfigurable {
     var delayValidation: FormCraftDelayValidation { get }
     var rule: (_ value: Value) async -> FormCraftValidationResponse<ValidatedValue> { get }
 
-    func validate() async -> (ValidatedValue?, LocalizedStringResource?)
+    func validate() async -> (ValidatedValue?, FormCraftFailure?)
 }
 
-public enum FormCraftValidationResponse<Value: Sendable>: Error {
-    case success(value: Value)
-    case error(message: LocalizedStringResource)
+public struct FormCraftFailure: Sendable {
+    let errors: [LocalizedStringResource]
 
-    public var errorMessage: LocalizedStringResource? {
-        if case .error(let message) = self {
-            return message
+    public init(_ errors: [LocalizedStringResource]) {
+        self.errors = errors
+    }
+
+    public init(_ errors: [String]) {
+        self.errors = errors.map { .init(stringLiteral: $0) }
+    }
+}
+
+public enum FormCraftValidationResponse<Value: Sendable> {
+    case success(value: Value)
+    case failure(errors: FormCraftFailure)
+
+    public var errors: [LocalizedStringResource]? {
+        if case .failure(let failure) = self {
+            return failure.errors
         }
 
         return nil
@@ -106,12 +116,12 @@ public struct FormCraftValidatedFields<Fields> {
 
 public protocol FormCraftFields {
     @MainActor
-    func refine(form: FormCraft<Self>) async -> [FormCraft<Self>.Key: LocalizedStringResource?]
+    func refine(form: FormCraft<Self>) async -> [FormCraft<Self>.Key: FormCraftValidationResponse<Sendable>]
 }
 
 public extension FormCraftFields {
     @MainActor
-    func refine(form: FormCraft<Self>) async -> [FormCraft<Self>.Key: LocalizedStringResource?] {
+    func refine(form: FormCraft<Self>) async -> [FormCraft<Self>.Key: FormCraftValidationResponse<Sendable>] {
         [:]
     }
 }
@@ -146,15 +156,14 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
     @Published public var fields: Fields
     public var registeredFields: [Name] = []
     @Published public var focusedFields: [String] = []
-    @Published public var errorFields: [Name: LocalizedStringResource] = [:]
+    @Published public var errorFields: [Name: FormCraftFailure] = [:]
     @Published public var validationFields: [Key: Task<Void, Never>] = [:]
     @Published public var formState = FormCraftFormState(
         isSubmitting: false
     )
 
     private let initialFields: Fields
-    private var fieldNameByKeyPath: [Key: String] = [:]
-    private var validationTask: Task<Void, Never>?
+    private var fieldNameByKeyPath: [Key: Name] = [:]
     private var validatedFields: [Key: Sendable] = [:]
 
     public init(fields: Fields) {
@@ -180,30 +189,20 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         registeredFields.removeAll(where: { $0 == name })
     }
 
-    public func setError(key: Key, message: LocalizedStringResource) {
+    public func setError(key: Key, errors: FormCraftFailure) {
         guard let name = fieldNameByKeyPath[key] else { return }
 
-        errorFields[name] = message
+        errorFields[name] = errors
     }
 
-    public func setErrors(errors: [String: LocalizedStringResource]) {
-        errorFields = errors
-    }
-
-    public func setErrors(errors: [String: String]) {
-        errorFields = errors.mapValues { .init(stringLiteral: $0) }
-    }
-
-    public func setErrors(errors: [Key: LocalizedStringResource]) {
+    public func setErrors(errors: [Key: FormCraftFailure]) {
         errors.forEach { error in
-            setError(key: error.key, message: error.value)
+            setError(key: error.key, errors: error.value)
         }
     }
 
-    public func setErrors(errors: [Key: String]) {
-        errors.forEach { error in
-            setError(key: error.key, message: .init(stringLiteral: error.value))
-        }
+    public func setErrors(errors: [String: [String]]) {
+        errorFields = errors.mapValues { .init($0) }
     }
 
     public func clearError(key: Key) {
@@ -216,53 +215,58 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         errorFields.removeAll()
     }
 
+    private func refineErrors() async -> [Name: FormCraftFailure] {
+        let results = await fields.refine(form: self)
+
+        let pairs: [(Name, FormCraftFailure)] = results.compactMap { (key, result) in
+            guard
+                case let .failure(errors) = result,
+                let name = fieldNameByKeyPath[key]
+            else {
+                return nil
+            }
+
+            return (name, errors)
+        }
+
+        return Dictionary(pairs, uniquingKeysWith: { _, new in new })
+    }
+
     public func validateField(key: Key) async {
         validationFields[key]?.cancel()
 
         guard let field = fields[keyPath: key] as? any FormCraftFieldConfigurable else { return }
 
         validationFields[key] = Task {
-            try? await Task.sleep(nanoseconds: UInt64(field.delayValidation.seconds * 1_000_000_000))
+            if field.delayValidation.seconds > 0 {
+                try? await Task.sleep(for: .seconds(field.delayValidation.seconds))
+
+                if Task.isCancelled {
+                    return
+                }
+            }
+
+            async let validation = field.validate()
+            async let refinedErrors = refineErrors()
+
+            let (validationResult, refinedResult) = await (validation, refinedErrors)
+            let (validatedValue, validatedErrors) = validationResult
+            let fieldErrors =
+                (fieldNameByKeyPath[key].flatMap { refinedResult[$0] }?.errors ?? []) +
+                (validatedErrors?.errors ?? [])
 
             if Task.isCancelled {
                 return
             }
 
-            let (validatedValue, errorMessage) = await field.validate()
-
-            if Task.isCancelled {
-                return
-            }
-
-            if let errorMessage {
+            if !fieldErrors.isEmpty {
                 setError(
                     key: key,
-                    message: errorMessage
+                    errors: .init(fieldErrors)
                 )
-                validatedFields.removeValue(forKey: key)
             } else {
                 validatedFields[key] = validatedValue
                 clearError(key: key)
-            }
-
-            let refineErrors = await fields.refine(form: self)
-
-            if Task.isCancelled {
-                return
-            }
-
-            refineErrors.forEach { errorKey, value in
-                if value == nil {
-                    return
-                }
-
-                guard let name = fieldNameByKeyPath[errorKey] else { return }
-
-                if errorMessage != nil && key == errorKey {
-                    return
-                }
-
-                errorFields[name] = value
             }
 
             validationFields.removeValue(forKey: key)
@@ -360,14 +364,14 @@ public struct FormCraftField<Value: Equatable & Sendable, ValidatedValue: Sendab
         self.rule = rule
     }
 
-    public func validate() async -> (ValidatedValue?, LocalizedStringResource?) {
+    public func validate() async -> (ValidatedValue?, FormCraftFailure?) {
         let validationResponse = await rule(value)
 
         switch validationResponse {
         case .success(let validatedValue):
             return (validatedValue, nil)
-        case .error(let message):
-            return (nil, message)
+        case .failure(let failure):
+            return (nil, failure)
         }
     }
 }

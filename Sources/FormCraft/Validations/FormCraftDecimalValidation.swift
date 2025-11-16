@@ -25,7 +25,7 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value <= num {
-                return .error(message: message?(num) ?? localizations.gt(String(describing: num)))
+                return .failure(errors: .init([message?(num) ?? localizations.gt(String(describing: num))]))
             }
 
             return .success(value: value)
@@ -44,7 +44,7 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value < num {
-                return .error(message: message?(num) ?? localizations.gte(String(describing: num)))
+                return .failure(errors: .init([message?(num) ?? localizations.gte(String(describing: num))]))
             }
 
             return .success(value: value)
@@ -63,7 +63,7 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value >= num {
-                return .error(message: message?(num) ?? localizations.lt(String(describing: num)))
+                return .failure(errors: .init([message?(num) ?? localizations.lt(String(describing: num))]))
             }
 
             return .success(value: value)
@@ -82,7 +82,7 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value > num {
-                return .error(message: message ?? localizations.lte(String(describing: num)))
+                return .failure(errors: .init([message ?? localizations.lte(String(describing: num))]))
             }
 
             return .success(value: value)
@@ -98,7 +98,7 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value <= 0 {
-                return .error(message: message ?? localizations.positive)
+                return .failure(errors: .init([message ?? localizations.positive]))
             }
 
             return .success(value: value)
@@ -114,7 +114,7 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value < 0 {
-                return .error(message: message ?? localizations.nonNegative)
+                return .failure(errors: .init([message ?? localizations.nonNegative]))
             }
 
             return .success(value: value)
@@ -130,7 +130,7 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value >= 0 {
-                return .error(message: message ?? localizations.negative)
+                return .failure(errors: .init([message ?? localizations.negative]))
             }
 
             return .success(value: value)
@@ -146,7 +146,7 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value > 0 {
-                return .error(message: message ?? localizations.nonPositive)
+                return .failure(errors: .init([message ?? localizations.nonPositive]))
             }
 
             return .success(value: value)
@@ -167,14 +167,14 @@ public struct FormCraftDecimalValidation: FormCraftValidationTypeRules {
             let errorMessage = message?(mult) ?? localizations.multipleOf(String(describing: mult))
 
             guard mult != 0 else {
-                return .error(message: errorMessage)
+                return .failure(errors: .init([errorMessage]))
             }
 
             let quotient = value / mult
             let truncated = Decimal(Double(trunc(Double(truncating: quotient as NSNumber))))
 
             if value - (mult * truncated) != 0 {
-                return .error(message: errorMessage)
+                return .failure(errors: .init([errorMessage]))
             }
 
             return .success(value: value)

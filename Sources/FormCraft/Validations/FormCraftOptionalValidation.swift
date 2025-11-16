@@ -30,8 +30,8 @@ public struct FormCraftOptionalValidation<Base: FormCraftValidationTypeRules>: F
             switch result {
             case .success(let value):
                 return .success(value: value)
-            case .error(let message):
-                return .error(message: message)
+            case .failure(let failure):
+                return .failure(errors: failure)
             }
         }
 

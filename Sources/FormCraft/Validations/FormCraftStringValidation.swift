@@ -22,7 +22,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value.isEmpty {
-                return .error(message: message ?? localizations.required)
+                return .failure(errors: .init([message ?? localizations.required]))
             }
 
             return .success(value: value)
@@ -41,7 +41,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         addRule { value in
             let t = value.trimmingCharacters(in: .whitespacesAndNewlines)
 
-            return (t == value) ? .success(value: value) : .error(message: message ?? localizations.trimmed)
+            return (t == value) ? .success(value: value) : .failure(errors: .init([message ?? localizations.trimmed]))
         }
     }
 
@@ -57,7 +57,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message ?? localizations.cuid)
+                return .failure(errors: .init([message ?? localizations.cuid]))
             }
 
             return .success(value: value)
@@ -76,7 +76,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message ?? localizations.cuid2)
+                return .failure(errors: .init([message ?? localizations.cuid2]))
             }
 
             return .success(value: value)
@@ -95,7 +95,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message ?? localizations.ulid)
+                return .failure(errors: .init([message ?? localizations.ulid]))
             }
 
             return .success(value: value)
@@ -116,7 +116,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message ?? localizations.uuid)
+                return .failure(errors: .init([message ?? localizations.uuid]))
             }
 
             return .success(value: value)
@@ -135,7 +135,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message ?? localizations.nanoId)
+                return .failure(errors: .init([message ?? localizations.nanoId]))
             }
 
             return .success(value: value)
@@ -156,7 +156,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message ?? localizations.ipv4)
+                return .failure(errors: .init([message ?? localizations.ipv4]))
             }
 
             return .success(value: value)
@@ -177,7 +177,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message ?? localizations.ipv6)
+                return .failure(errors: .init([message ?? localizations.ipv6]))
             }
 
             return .success(value: value)
@@ -198,7 +198,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message ?? localizations.cidrv4)
+                return .failure(errors: .init([message ?? localizations.cidrv4]))
             }
 
             return .success(value: value)
@@ -219,7 +219,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message ?? localizations.cidrv6)
+                return .failure(errors: .init([message ?? localizations.cidrv6]))
             }
 
             return .success(value: value)
@@ -240,7 +240,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let isMatch = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatch else {
-                return .error(message: message ?? localizations.isoDate)
+                return .failure(errors: .init([message ?? localizations.isoDate]))
             }
 
             return .success(value: value)
@@ -262,7 +262,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let predicate = NSPredicate(format: "SELF MATCHES %@", pattern)
 
             guard predicate.evaluate(with: value) else {
-                return .error(message: message ?? localizations.email)
+                return .failure(errors: .init([message ?? localizations.email]))
             }
 
             return .success(value: value)
@@ -284,7 +284,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
             let predicate = NSPredicate(format: "SELF MATCHES %@", pattern)
 
             guard predicate.evaluate(with: value) else {
-                return .error(message: message ?? localizations.e164phoneNumber)
+                return .failure(errors: .init([message ?? localizations.e164phoneNumber]))
             }
 
             return .success(value: value)
@@ -301,19 +301,15 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
         pattern: Regex<Substring>,
         message: LocalizedStringResource? = nil
     ) -> Self {
-        var copySelf = self
-
-        copySelf.rules.append { value in
+        addRule { value in
             let isMatches = (try? pattern.wholeMatch(in: value)) != nil
 
             guard isMatches else {
-                return .error(message: message ?? localizations.regex)
+                return .failure(errors: .init([message ?? localizations.regex]))
             }
 
             return .success(value: value)
         }
-
-        return copySelf
     }
 
     /// Validates that the value equals the specified string.
@@ -328,7 +324,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value != to {
-                return .error(message: message?(value, to) ?? localizations.equals(value, to))
+                return .failure(errors: .init([message?(value, to) ?? localizations.equals(value, to)]))
             }
 
             return .success(value: value)
@@ -347,7 +343,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value.count < min {
-                return .error(message: message?(min) ?? localizations.minLength(String(describing: min)))
+                return .failure(errors: .init([message?(min) ?? localizations.minLength(String(describing: min))]))
             }
 
             return .success(value: value)
@@ -366,7 +362,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value.count > max {
-                return .error(message: message?(max) ?? localizations.maxLength(String(describing: max)))
+                return .failure(errors: .init([message?(max) ?? localizations.maxLength(String(describing: max))]))
             }
 
             return .success(value: value)
@@ -385,7 +381,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value.count != length {
-                return .error(message: message?(length) ?? localizations.length(String(describing: length)))
+                return .failure(errors: .init([message?(length) ?? localizations.length(String(describing: length))]))
             }
 
             return .success(value: value)
@@ -398,7 +394,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if !value.hasPrefix(prefix) {
-                return .error(message: message?(prefix) ?? localizations.startsWith(prefix))
+                return .failure(errors: .init([message?(prefix) ?? localizations.startsWith(prefix)]))
             }
 
             return .success(value: value)
@@ -411,7 +407,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if !value.hasSuffix(suffix) {
-                return .error(message: message?(suffix) ?? localizations.endsWith(suffix))
+                return .failure(errors: .init([message?(suffix) ?? localizations.endsWith(suffix)]))
             }
             return .success(value: value)
         }
@@ -423,7 +419,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if !value.contains(substring) {
-                return .error(message: message?(substring) ?? localizations.includes(substring))
+                return .failure(errors: .init([message?(substring) ?? localizations.includes(substring)]))
             }
             return .success(value: value)
         }
@@ -434,7 +430,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value != value.uppercased() {
-                return .error(message: message ?? localizations.uppercase)
+                return .failure(errors: .init([message ?? localizations.uppercase]))
             }
             return .success(value: value)
         }
@@ -445,7 +441,7 @@ public struct FormCraftStringValidation: FormCraftValidationTypeRules {
     ) -> Self {
         addRule { value in
             if value != value.lowercased() {
-                return .error(message: message ?? localizations.lowercase)
+                return .failure(errors: .init([message ?? localizations.lowercase]))
             }
             return .success(value: value)
         }

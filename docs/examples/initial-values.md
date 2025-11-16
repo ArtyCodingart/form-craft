@@ -63,25 +63,25 @@ struct InitialValuesFormView: View {
                 FormCraftControllerView(
                     formConfig: form,
                     key: \.firstName
-                ) { field in
-                    TextField("First name", text: field.$value)
+                ) { value, field in
+                    TextField("First name", text: value)
                         .textFieldStyle(.roundedBorder)
-                    Text(field.error)
+                    Text(field.errors.first ?? "")
                         .foregroundStyle(.red)
                 }
 
                 FormCraftControllerView(
                     formConfig: form,
                     key: \.lastName
-                ) { field in
-                    TextField("Last name", text: field.$value)
+                ) { value, field in
+                    TextField("Last name", text: value)
                         .textFieldStyle(.roundedBorder)
-                    Text(field.error)
+                    Text(field.errors.first ?? "")
                         .foregroundStyle(.red)
                 }
             }
 
-            Button("Login", action: form.handleSubmit(onSuccess: updatePlayer))
+            Button("Update", action: form.handleSubmit(onSuccess: updatePlayer))
                 .disabled(form.formState.isSubmitting)
         }
         .task(onTask)

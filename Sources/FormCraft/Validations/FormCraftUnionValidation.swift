@@ -24,16 +24,16 @@ public extension FormCraftValidationRules {
     ) async -> FormCraftValidationResponse<(repeat ((each Rule).Value)?)> {
         let results = await (repeat (each rules).validate(raw: value))
 
-        var errorMessage: LocalizedStringResource = .unexpectedError
+        var errors: [LocalizedStringResource] = []
         for result in repeat each results {
             switch result {
             case .success:
                 return .success(value: (repeat (each results).value))
-            case .error(let message):
-                errorMessage = message
+            case .failure(let failure):
+                errors += failure.errors
             }
         }
 
-        return .error(message: errorMessage)
+        return .failure(errors: .init(errors))
     }
 }

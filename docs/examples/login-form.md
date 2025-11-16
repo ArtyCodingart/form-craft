@@ -38,20 +38,20 @@ struct LoginFormView: View {
             FormCraftControllerView(
                 formConfig: loginForm,
                 key: \.login
-            ) { field in
-                TextField("Email", text: field.$value)
+            ) { value, field in
+                TextField("Email", text: value)
                     .textFieldStyle(.roundedBorder)
-                Text(field.error)
+                Text(field.errors.first ?? "")
                     .foregroundStyle(.red)
             }
 
             FormCraftControllerView(
                 formConfig: loginForm,
                 key: \.password
-            ) { field in
-                TextField("Email", text: field.$value)
+            ) { value, field in
+                TextField("Email", text: value)
                     .textFieldStyle(.roundedBorder)
-                Text(field.error)
+                Text(field.errors.first ?? "")
                     .foregroundStyle(.red)
             }
         }

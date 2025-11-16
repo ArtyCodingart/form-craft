@@ -17,10 +17,8 @@ private class FormCraftControllerVM: ObservableObject {
     }
 }
 
-public struct FieldState<Value> {
-    @Binding public var value: Value
-    public var isError: Bool
-    public var error: LocalizedStringResource
+public struct FieldState {
+    public var errors: [LocalizedStringResource]
     public var isValidating: Bool
 }
 
@@ -33,30 +31,22 @@ public struct FormCraftControllerView<
 
     @ObservedObject private var formConfig: FormConfig
     private let key: WritableKeyPath<FormConfig.Fields, FormField>
-    private let content: (_ fieldState: FieldState<Value>) -> Content
+    private let content: (_ value: Binding<Value>, _ fieldState: FieldState) -> Content
 
     @FocusState private var isFocused: Bool
     @StateObject private var formCraftControllerVM: FormCraftControllerVM
+    @State private var value: Binding<Value>
 
     private var formField: FormField {
         formConfig.fields[keyPath: key]
     }
-    private var fieldState: FieldState<Value> {
-        let binding = Binding(
-            get: {
-                formConfig.fields[keyPath: key].value
-            },
-            set: {
-                formConfig.fields[keyPath: key].value = $0
-            }
-        )
-        let error = formConfig.errorFields.first(where: { $0.key == formField.name })?.value
+
+    private var fieldState: FieldState {
+        let errors = formConfig.errorFields.first(where: { $0.key == formField.name })?.value
         let isValidating = formConfig.validationFields[key]
 
-        return FieldState(
-            value: binding,
-            isError: error != nil,
-            error: error ?? "",
+        return .init(
+            errors: errors?.errors ?? [],
             isValidating: isValidating != nil
         )
     }
@@ -64,7 +54,7 @@ public struct FormCraftControllerView<
     public init(
         formConfig: FormConfig,
         key: WritableKeyPath<FormConfig.Fields, FormField>,
-        @ViewBuilder content: @escaping (_ fieldState: FieldState<Value>) -> Content
+        @ViewBuilder content: @escaping (_ value: Binding<Value>, _ fieldState: FieldState) -> Content
     ) {
         self.formConfig = formConfig
         self.key = key
@@ -78,10 +68,14 @@ public struct FormCraftControllerView<
                 formConfig.unregisterField(key: key)
             }
         ))
+        self._value = .init(wrappedValue: .init(
+            get: { formConfig.fields[keyPath: key].value },
+            set: { formConfig.fields[keyPath: key].value = $0 }
+        ))
     }
 
     public var body: some View {
-        content(fieldState)
+        content(value, fieldState)
             .focused($isFocused)
             .onChange(of: formConfig.focusedFields) { value in
                 isFocused = value.contains(formField.name)

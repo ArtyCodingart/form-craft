@@ -6,7 +6,7 @@ import FormCraft
 
 private struct ServerError: LocalizedError {
     let code: Int
-    let errors: [String: String]
+    let errors: [String: [String]]
 
     var errorDescription: String? { "Server error \(code)" }
 }
@@ -29,7 +29,7 @@ private struct PlayerRepository {
             return .failure(
                 .init(
                     code: 400,
-                    errors: ["firstName": "First name must be 4 characters or fewer."]
+                    errors: ["firstName": ["First name must be 4 characters or fewer."]]
                 )
             )
         }
@@ -86,20 +86,20 @@ struct ServerErrorsFormView: View {
                 FormCraftControllerView(
                     formConfig: form,
                     key: \.firstName
-                ) { field in
-                    TextField("First name", text: field.$value)
+                ) { value, field in
+                    TextField("First name", text: value)
                         .textFieldStyle(.roundedBorder)
-                    Text(field.error)
+                    Text(field.errors.first ?? "")
                         .foregroundStyle(.red)
                 }
 
                 FormCraftControllerView(
                     formConfig: form,
                     key: \.lastName
-                ) { field in
-                    TextField("Last name", text: field.$value)
+                ) { value, field in
+                    TextField("Last name", text: value)
                         .textFieldStyle(.roundedBorder)
-                    Text(field.error)
+                    Text(field.errors.first ?? "")
                         .foregroundStyle(.red)
                 }
             }

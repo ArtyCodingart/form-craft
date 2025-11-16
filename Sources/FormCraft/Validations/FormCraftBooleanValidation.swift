@@ -20,7 +20,7 @@ public struct FormCraftBooleanValidation: FormCraftValidationTypeRules {
     public func checked(message: LocalizedStringResource? = nil) -> Self {
         addRule { value in
             if !value {
-                return .error(message: message ?? localizations.required)
+                return .failure(errors: .init([message ?? localizations.required]))
             }
 
             return .success(value: value)

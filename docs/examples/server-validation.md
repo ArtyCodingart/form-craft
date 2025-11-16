@@ -30,7 +30,8 @@ private struct LoginFormFields: FormCraftFields {
             .notEmpty()
             .email()
             .validate(value: value)
-        if case .error = validateResult {
+
+        if case .failure = validateResult {
             return validateResult
         }
 
@@ -39,7 +40,7 @@ private struct LoginFormFields: FormCraftFields {
         if isValidEmail {
             return .success(value: value)
         }
-        return .error(message: "Email already exists")
+        return .failure(errors: .init(["Email already exists"]))
     }
 
     var password = FormCraftField(name: "password", value: "") { value in
@@ -66,21 +67,21 @@ struct ServerValidationFormView: View {
             FormCraftControllerView(
                 formConfig: loginForm,
                 key: \.login
-            ) { field in
-                TextField("Email", text: field.$value)
+            ) { value, field in
+                TextField("Email", text: value)
                     .textFieldStyle(.roundedBorder)
-                Text(field.error)
+                Text(field.errors.first ?? "")
                     .foregroundStyle(.red)
-                Text("Is validating: \(field.isValidating)")
+                Text("Is validating: \(String(field.isValidating))")
             }
 
             FormCraftControllerView(
                 formConfig: loginForm,
                 key: \.password
-            ) { field in
-                TextField("Email", text: field.$value)
+            ) { value, field in
+                TextField("Email", text: value)
                     .textFieldStyle(.roundedBorder)
-                Text(field.error)
+                Text(field.errors.first ?? "")
                     .foregroundStyle(.red)
             }
         }

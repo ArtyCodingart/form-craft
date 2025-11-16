@@ -17,10 +17,10 @@ public extension FormCraftValidationTypeRules {
     func validate(raw: Any?) async -> FormCraftValidationResponse<Value> {
         guard let typed = raw as? Value else {
             if raw == nil {
-                return .error(message: localizations.required)
+                return .failure(errors: .init([localizations.required]))
             }
 
-            return .error(message: .invalidType(String(describing: Value.self), "\(type(of: raw))"))
+            return .failure(errors: .init([.invalidType(String(describing: Value.self), "\(type(of: raw))")]))
         }
 
         return await validate(value: typed)
@@ -35,8 +35,8 @@ public extension FormCraftValidationTypeRules {
             switch validated {
             case .success(let successValue):
                 modifyValue = successValue
-            case .error(let message):
-                return .error(message: message)
+            case .failure(let failure):
+                return .failure(errors: failure)
             }
         }
 
