@@ -6,7 +6,7 @@ Strictly greater than the specified number.
 
 **Parameters**
 - `num: Decimal` – exclusive lower bound  
-- `message: String` – error message if the value is not greater
+- `message: LocalizedStringResource` – error message if the value is not greater
 
 ```swift
 let greaterThan = FormCraftValidationRules()
@@ -23,7 +23,7 @@ Greater than or equal to the specified number.
 
 **Parameters**
 - `num: Decimal` – inclusive lower bound  
-- `message: String` – error message if the value is less
+- `message: LocalizedStringResource` – error message if the value is less
 
 ```swift
 let greaterOrEqual = FormCraftValidationRules()
@@ -40,7 +40,7 @@ Strictly less than the specified number.
 
 **Parameters**
 - `num: Decimal` – exclusive upper bound  
-- `message: String` – error message if the value is not less
+- `message: LocalizedStringResource` – error message if the value is not less
 
 ```swift
 let lessThan = FormCraftValidationRules()
@@ -57,7 +57,7 @@ Less than or equal to the specified number.
 
 **Parameters**
 - `num: Decimal` – inclusive upper bound  
-- `message: String` – error message if the value is greater
+- `message: LocalizedStringResource` – error message if the value is greater
 
 ```swift
 let lessOrEqual = FormCraftValidationRules()
@@ -73,7 +73,7 @@ lessOrEqual.validate(value: 101) // ❌ is not valid
 Positive number (greater than zero).
 
 **Parameters**
-- `message: String` – error message if the value is not positive
+- `message: LocalizedStringResource` – error message if the value is not positive
 
 ```swift
 let positive = FormCraftValidationRules()
@@ -89,7 +89,7 @@ positive.validate(value: -10)  // ❌ is not valid
 Zero or positive.
 
 **Parameters**
-- `message: String` – error message if the value is negative
+- `message: LocalizedStringResource` – error message if the value is negative
 
 ```swift
 let nonNegative = FormCraftValidationRules()
@@ -105,7 +105,7 @@ nonNegative.validate(value: -1)  // ❌ is not valid
 Negative number (less than zero).
 
 **Parameters**
-- `message: String` – error message if the value is not negative
+- `message: LocalizedStringResource` – error message if the value is not negative
 
 ```swift
 let negative = FormCraftValidationRules()
@@ -121,7 +121,7 @@ negative.validate(value: 5)  // ❌ is not valid
 Zero or negative.
 
 **Parameters**
-- `message: String` – error message if the value is positive
+- `message: LocalizedStringResource` – error message if the value is positive
 
 ```swift
 let nonPositive = FormCraftValidationRules()
@@ -138,7 +138,7 @@ Even divisibility by the specified multiplier.
 
 **Parameters**
 - `mult: Decimal` – multiplier (divisor). If zero, validation fails  
-- `message: String` – error message if the value is not a multiple
+- `message: LocalizedStringResource` – error message if the value is not a multiple
 
 ```swift
 let multipleOf = FormCraftValidationRules()

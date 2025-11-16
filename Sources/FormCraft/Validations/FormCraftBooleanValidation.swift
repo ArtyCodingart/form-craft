@@ -15,7 +15,7 @@ public struct FormCraftBooleanValidation: FormCraftValidationTypeRules {
 
     /// Validates that the value is `true`.
     ///
-    /// - Parameter message: The error message returned when the value is `false`.
+    /// - Parameter LocalizedStringResource: The error message returned when the value is `false`.
     /// - Returns: The validation builder for chaining.
     public func checked(message: LocalizedStringResource? = nil) -> Self {
         addRule { value in

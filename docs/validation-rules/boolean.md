@@ -5,7 +5,7 @@
 Value must be `true`.  
 
 **Parameters**
-- `message: String` – error message if the value is `false`
+- `message: LocalizedStringResource` – error message if the value is `false`
 
 ```swift
 let checked = FormCraftValidationRules()

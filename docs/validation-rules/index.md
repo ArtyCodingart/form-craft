@@ -44,7 +44,7 @@ If you don’t know the exact type at runtime or want to cast dynamically, use t
 
 The `validate` method returns a `FormCraftValidationResponse<Value>` enum:
 - `.success(value: Value)` — validation passed
-- `.error(message: String)` — validation failed
+- `.error(message: LocalizedStringResource)` — validation failed
 
 ::: info
 The `validate` method is asynchronous.
@@ -62,7 +62,7 @@ Since email is a string, we can extend the `FormCraftStringValidation` validator
 
 ```swift
 extension FormCraftStringValidation {
-  func checkDuplicateEmail(message: String = "Email already exists") -> Self {
+  func checkDuplicateEmail(message: LocalizedStringResource = "Email already exists") -> Self {
     var copySelf = self
 
     copySelf.rules.append { value in
@@ -128,7 +128,7 @@ extension FormCraftValidationRules {
 struct UserValidation: FormCraftValidationTypeRules {
   var rules: [(_ value: User) async -> FormCraftValidationResponse<User>] = []
 
-  func checkAge(message: String = "You must be over 21") async -> Self {
+  func checkAge(message: LocalizedStringResource = "You must be over 21") async -> Self {
     var copySelf = self
 
     copySelf.rules.append { value in
@@ -142,7 +142,7 @@ struct UserValidation: FormCraftValidationTypeRules {
     return copySelf
   }
 
-  func checkFirstName(message: String = "First name must be longer than 6 characters.") async -> Self {
+  func checkFirstName(message: LocalizedStringResource = "First name must be longer than 6 characters.") async -> Self {
     var copySelf = self
 
     copySelf.rules.append { value in
