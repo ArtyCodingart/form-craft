@@ -75,7 +75,7 @@ public struct FormCraftControllerView<
     }
 
     public var body: some View {
-        content(value, fieldState)
+        MyView(value: value, fieldState: fieldState, content: content)
             .focused($isFocused)
             .onChange(of: formConfig.focusedFields) { value in
                 isFocused = value.contains(formField.name)
@@ -97,5 +97,15 @@ public struct FormCraftControllerView<
                     await formConfig.validateField(key: key)
                 }
             }
+    }
+}
+
+struct MyView<Content: View, Value>: View {
+    @Binding var value: Value
+    let fieldState: FieldState
+    let content: (_ value: Binding<Value>, _ fieldState: FieldState) -> Content
+
+    var body: some View {
+        content($value, fieldState)
     }
 }
