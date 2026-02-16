@@ -7,7 +7,7 @@ public macro FormCraft() = #externalMacro(module: "FormCraftMacros", type: "Form
 public protocol FormCraftConfig: Observable, AnyObject {
     associatedtype Fields: FormCraftFields
     typealias Name = String
-    typealias Key = PartialKeyPath<Fields>
+    typealias Key = KeyPath<Fields, any FormCraftFieldConfigurable>
 
     var fields: Fields { get set }
     var formState: FormCraftFormState { get set }
@@ -60,7 +60,7 @@ public struct FormCraftValidatedFields<Fields> {
 @Observable
 public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
     public typealias Name = String
-    public typealias Key = PartialKeyPath<Fields>
+    public typealias Key = KeyPath<Fields, any FormCraftFieldConfigurable>
 
     public var fields: Fields
     public var formState = FormCraftFormState(
@@ -74,11 +74,7 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
 
     public func setErrors(errors: [Key: FormCraftFailure]) {
         errors.forEach { error in
-            guard let field = fields[keyPath: error.key] as? FormCraftFieldConfigurable else {
-                return
-            }
-
-            field.errors = error.value
+            fields[keyPath: error.key].errors = error.value
         }
     }
 
@@ -88,27 +84,19 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
                 return
             }
 
-            guard let field = fields[keyPath: fieldKey] as? FormCraftFieldConfigurable else {
-                return
-            }
-
-            field.errors = .init(error.value.compactMap { .init($0) })
+            fields[keyPath: fieldKey].errors = .init(error.value.compactMap { .init($0) })
         }
     }
 
     public func clearError(key: Key) {
-        guard let field = fields[keyPath: key] as? FormCraftFieldConfigurable else {
-            return
-        }
+        let field = fields[keyPath: key]
 
         field.errors = nil
     }
 
     public func clearErrors() {
-        fields.getAccessNames().mapValues { fieldKey in
-            if let field = fields[keyPath: fieldKey] as? FormCraftFieldConfigurable {
-                field.errors = nil
-            }
+        fields.getAccessNames().forEach { _, fieldKey in
+            fields[keyPath: fieldKey].errors = nil
         }
     }
 
@@ -123,9 +111,7 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
     }
 
     public func validateField(key: Key) async -> Bool {
-        guard let field = fields[keyPath: key] as? FormCraftFieldConfigurable else {
-            return true
-        }
+        let field = fields[keyPath: key]
 
         field.taskValidation?.cancel()
 
@@ -178,7 +164,7 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
 
     public func validateFields() async -> Bool {
         let fieldsByName = fields.getAccessNames().flatMap { (name, key) in
-            [name: fields[keyPath: key] as? any FormCraftFieldConfigurable]
+            [name: fields[keyPath: key]]
         }
 
         clearErrors()
@@ -186,7 +172,7 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         async let asyncPerFieldValidationFailures = withTaskGroup(of: [Name: FormCraftFailure?].self) { group in
             for (name, field) in fieldsByName {
                 group.addTask {
-                    let failure = await field?.validate()
+                    let failure = await field.validate()
 
                     return [name: failure]
                 }
@@ -220,7 +206,7 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         )
 
         failuresByKeyPath.forEach { keyPath, failure in
-            guard let field = fields[keyPath: keyPath] as? any FormCraftFieldConfigurable else { return }
+            let field = fields[keyPath: keyPath]
 
             field.errors = failure
         }

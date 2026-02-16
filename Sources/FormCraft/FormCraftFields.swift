@@ -21,7 +21,7 @@ public struct FormCraftFailure: Sendable {
 
 @MainActor
 public protocol FormCraftFields {
-    func getAccessNames() -> [String: PartialKeyPath<Self>]
+    func getAccessNames() -> [String: KeyPath<Self, any FormCraftFieldConfigurable>]
     func refine(form: FormCraft<Self>) async -> [FormCraft<Self>.Key: FormCraftFailure?]
 }
 

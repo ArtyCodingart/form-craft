@@ -38,8 +38,9 @@ public struct FormCraft: MemberMacro {
 
        return [
            """
-           func getAccessNames() -> [String: PartialKeyPath<\(raw: structName)>] {
-               [\(raw: mapperString)]
+           func getAccessNames() -> [String: KeyPath<\(raw: structName), any FormCraftFieldConfigurable>] {
+               let all: [String: PartialKeyPath<\(raw: structName)>] = [\(raw: mapperString)]
+               return all.compactMapValues { $0 as? KeyPath<\(raw: structName), any FormCraftFieldConfigurable> }
            }
            """
        ]
