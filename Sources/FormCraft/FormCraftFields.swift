@@ -22,11 +22,11 @@ public struct FormCraftFailure: Sendable {
 @MainActor
 public protocol FormCraftFields {
     func getAccessNames() -> [String: KeyPath<Self, any FormCraftFieldConfigurable>]
-    func refine(form: FormCraft<Self>) async -> [FormCraft<Self>.Key: FormCraftFailure?]
+    func refine(form: FormCraft<Self>) async -> [PartialKeyPath<Self>: FormCraftFailure?]
 }
 
 public extension FormCraftFields {
-    func refine(form: FormCraft<Self>) async -> [FormCraft<Self>.Key: FormCraftFailure?] {
+    func refine(form: FormCraft<Self>) async -> [PartialKeyPath<Self>: FormCraftFailure?] {
         [:]
     }
 }
@@ -119,6 +119,8 @@ public final class FormCraftField<Value: Equatable & Sendable, ValidatedValue: S
     }
 
     public func validate() async -> FormCraftFailure? {
+        self.isValidation = true
+
         let validationResponse = await rule(value)
 
         switch validationResponse {

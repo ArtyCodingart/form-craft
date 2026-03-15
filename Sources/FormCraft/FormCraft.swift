@@ -7,19 +7,20 @@ public macro FormCraft() = #externalMacro(module: "FormCraftMacros", type: "Form
 public protocol FormCraftConfig: Observable, AnyObject {
     associatedtype Fields: FormCraftFields
     typealias Name = String
-    typealias Key = KeyPath<Fields, any FormCraftFieldConfigurable>
 
     var fields: Fields { get set }
     var formState: FormCraftFormState { get set }
 
-    func setErrors(errors: [Key: FormCraftFailure])
-    func setErrors(errors: [Name: [String]])
-    func clearError(key: Key)
-    func clearErrors() async
-    func setDefaultValues<Field: FormCraftFieldConfigurable>(
-        values: [WritableKeyPath<Fields, Field>: Field.Value]
+    func setErrors<each Field: FormCraftFieldConfigurable>(
+        _ pairs: repeat (KeyPath<Fields, each Field>, FormCraftFailure)
     )
-    func validateField(key: Key) async -> Bool
+    func setErrors(errors: [Name: [String]])
+    func clearError<Field: FormCraftFieldConfigurable>(key: KeyPath<Fields, Field>)
+    func clearErrors()
+    func setDefaultValues<each Field: FormCraftFieldConfigurable>(
+        _ pairs: repeat (WritableKeyPath<Fields, each Field>, (each Field).Value)
+    )
+    func validateField<Field: FormCraftFieldConfigurable>(key: KeyPath<Fields, Field>) async -> Bool
     func validateFields() async -> Bool
     func handleSubmit(onSuccess: @escaping (_ data: FormCraftValidatedFields<Fields>) async -> Void) -> () -> Void
 }
@@ -32,19 +33,11 @@ public struct FormCraftFormState {
     }
 }
 
-public struct FormCraftSetValueConfig {
-    public let shouldValidate: Bool
-
-    public init(shouldValidate: Bool) {
-        self.shouldValidate = shouldValidate
-    }
-}
-
 @dynamicMemberLookup @MainActor
 public struct FormCraftValidatedFields<Fields> {
     private let underlyingFields: Fields
 
-    public init(
+    init(
         fields: Fields
     ) {
         self.underlyingFields = fields
@@ -60,7 +53,8 @@ public struct FormCraftValidatedFields<Fields> {
 @Observable
 public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
     public typealias Name = String
-    public typealias Key = KeyPath<Fields, any FormCraftFieldConfigurable>
+
+    private var taskRefine: Task<FormCraftFailure?, Never>? = nil
 
     public var fields: Fields
     public var formState = FormCraftFormState(
@@ -71,11 +65,14 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         self.fields = fields
     }
 
-
-    public func setErrors(errors: [Key: FormCraftFailure]) {
-        errors.forEach { error in
-            fields[keyPath: error.key].errors = error.value
+    public func setErrors<each Field: FormCraftFieldConfigurable>(
+        _ pairs: repeat (KeyPath<Fields, each Field>, FormCraftFailure)
+    ) {
+        func apply<F: FormCraftFieldConfigurable>(_ key: KeyPath<Fields, F>, _ failure: FormCraftFailure) {
+            fields[keyPath: key].errors = failure
         }
+
+        repeat apply((each pairs).0, (each pairs).1)
     }
 
     public func setErrors(errors: [String: [String]]) {
@@ -88,7 +85,7 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         }
     }
 
-    public func clearError(key: Key) {
+    public func clearError<Field: FormCraftFieldConfigurable>(key: KeyPath<Fields, Field>) {
         let field = fields[keyPath: key]
 
         field.errors = nil
@@ -100,24 +97,40 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         }
     }
 
-    public func setDefaultValues<Field: FormCraftFieldConfigurable>(
-        values: [WritableKeyPath<Fields, Field> : Field.Value]
+    public func setDefaultValues<each Field: FormCraftFieldConfigurable>(
+        _ pairs: repeat (WritableKeyPath<Fields, each Field>, (each Field).Value)
     ) {
-        values.forEach { item in
-            fields[keyPath: item.key].defaultValue = item.value
-            fields[keyPath: item.key].isDirty = false
-            fields[keyPath: item.key].value = item.value
+        func apply<F: FormCraftFieldConfigurable>(_ key: WritableKeyPath<Fields, F>, _ value: F.Value) {
+            fields[keyPath: key].defaultValue = value
+            fields[keyPath: key].isDirty = false
+            fields[keyPath: key].value = value
         }
+        repeat apply((each pairs).0, (each pairs).1)
     }
 
-    public func validateField(key: Key) async -> Bool {
+    private func validateRefine() async -> [PartialKeyPath<Fields>: FormCraftFailure] {
+        taskRefine?.cancel()
+
+        if Task.isCancelled {
+            return [:]
+        }
+
+        let refineValidated = await fields.refine(form: self)
+
+        if Task.isCancelled {
+            return [:]
+        }
+
+        return refineValidated.compactMapValues { $0 }
+    }
+
+    public func validateField<Field: FormCraftFieldConfigurable>(key: KeyPath<Fields, Field>) async -> Bool {
         let field = fields[keyPath: key]
 
         field.taskValidation?.cancel()
+        field.errors = nil
 
         let task = Task {
-            field.isValidation = true
-
             if field.delayValidation.seconds > 0 {
                 try? await Task.sleep(for: .seconds(field.delayValidation.seconds))
 
@@ -127,27 +140,14 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
             }
 
             async let asyncFieldValidated = field.validate()
-            let refineValidated = await fields.refine(form: self)
             let fieldValidated = await asyncFieldValidated
 
             if Task.isCancelled {
                 return
             }
 
-            field.errors = fieldValidated
-
-            refineValidated.forEach {
-                guard let field = fields[keyPath: $0.key] as? FormCraftFieldConfigurable else {
-                    return
-                }
-
-                if $0.key == key, let errors = field.errors {
-//                    errors.errors += $0.value?.errors ?? []
-
-                    return
-                }
-
-//                field.
+            if let fieldValidated {
+                field.errors = fieldValidated
             }
         }
 
@@ -155,11 +155,7 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
 
         await task.value
 
-//        async let fieldValidated = field.validate()
-//        async let refineValidated = fields.refine(form: self)
-
-
-        return true
+        return field.errors == nil
     }
 
     public func validateFields() async -> Bool {
@@ -192,13 +188,11 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
             return collected.compactMapValues { $0 }
         }
 
-        let refineFailuresByKeyPath: [Key: FormCraftFailure] = await fields
-            .refine(form: self)
-            .compactMapValues { $0 }
+        let refineFailuresByKeyPath = await validateRefine()
 
         let perFieldValidationFailures = await asyncPerFieldValidationFailures 
 
-        var failuresByKeyPath: [Key: FormCraftFailure] = Dictionary(
+        var failuresByKeyPath: [PartialKeyPath<Fields>: FormCraftFailure] = Dictionary(
             uniqueKeysWithValues: perFieldValidationFailures.compactMap { name, failure in
                 guard let keyPath = accessNames[name] else { return nil }
 
@@ -212,7 +206,9 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         )
 
         failuresByKeyPath.forEach { keyPath, failure in
-            let field = fields[keyPath: keyPath]
+            guard let field = fields[keyPath: keyPath] as? FormCraftFieldConfigurable else {
+                return
+            }
 
             field.errors = failure
         }
@@ -223,21 +219,23 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
     public func handleSubmit(
         onSuccess: @escaping (_ data: FormCraftValidatedFields<Fields>) async -> Void
     ) -> () -> Void {
-        {
+        { [weak self] in
+            guard let self else { return }
+
             self.formState.isSubmitting = true
 
             Task { [weak self] in
                 guard let self else { return }
 
+                defer { self.formState.isSubmitting = false }
+
                 let isValid = await self.validateFields()
 
-                if isValid {
-                    await onSuccess(FormCraftValidatedFields(
-                        fields: self.fields
-                    ))
-                }
+                guard isValid else { return }
 
-                self.formState.isSubmitting = false
+                await onSuccess(
+                    FormCraftValidatedFields(fields: self.fields)
+                )
             }
         }
     }
