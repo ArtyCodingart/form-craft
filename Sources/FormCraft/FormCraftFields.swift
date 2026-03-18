@@ -44,6 +44,7 @@ public protocol FormCraftFieldConfigurable: Observable, AnyObject, Sendable {
     var isValidation: Bool { get set }
     var taskValidation: Task<Void, Never>? { get set }
     var isDirty: Bool { get set }
+    var isError: Bool { get }
     var delayValidation: FormCraftDelayValidation { get }
     var rule: (_ value: Value) async -> FormCraftValidationResponse<ValidatedValue> { get }
 
@@ -104,6 +105,7 @@ public final class FormCraftField<Value: Equatable & Sendable, ValidatedValue: S
     public var isValidation: Bool = false
     public var taskValidation: Task<Void, Never>? = nil
     public var isDirty: Bool = false
+    public var isError: Bool { errors != nil }
     public let delayValidation: FormCraftDelayValidation
     public let rule: (_ value: Value) async -> FormCraftValidationResponse<ValidatedValue>
 
