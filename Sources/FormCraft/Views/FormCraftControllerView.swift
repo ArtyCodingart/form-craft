@@ -8,6 +8,7 @@ public struct FormCraftControllerView<
     public typealias Value = FormField.Value
 
     @Bindable var formConfig: FormConfig
+    @FocusState private var isFocused: Bool
     private let content: (_ value: Binding<Value>, _ formField: FormField) -> Content
     private let key: WritableKeyPath<FormConfig.Fields, FormField>
 
@@ -25,24 +26,34 @@ public struct FormCraftControllerView<
         @Bindable var field = formConfig.fields[keyPath: key]
 
         content($field.value, formConfig.fields[keyPath: key])
-        .onAppear {
-            formConfig.fields[keyPath: key].mounted = true
-        }
-        .onDisappear {
-            formConfig.fields[keyPath: key].mounted = false
-        }
-        .onChange(of: field.value) {
-            if field.isDirty == false && field.value != field.defaultValue {
-                field.isDirty = true
+            .focused($isFocused)
+            .onAppear {
+                formConfig.fields[keyPath: key].mounted = true
+                isFocused = formConfig.formState.focusedFieldKey == key
             }
+            .onDisappear {
+                formConfig.fields[keyPath: key].mounted = false
+            }
+            .onChange(of: formConfig.formState.focusedFieldKey) {
+                isFocused = formConfig.formState.focusedFieldKey == key
+            }
+            .onChange(of: isFocused) {
+                if !isFocused && formConfig.formState.focusedFieldKey == key {
+                    formConfig.formState.focusedFieldKey = nil
+                }
+            }
+            .onChange(of: field.value) {
+                if field.isDirty == false && field.value != field.defaultValue {
+                    field.isDirty = true
+                }
 
-            if !field.isDirty {
-                return
-            }
+                if !field.isDirty {
+                    return
+                }
 
-            Task {
-                await formConfig.validateField(key: key)
+                Task {
+                    await formConfig.validateField(key: key)
+                }
             }
-        }
     }
 }

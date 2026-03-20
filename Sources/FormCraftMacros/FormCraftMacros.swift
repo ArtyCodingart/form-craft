@@ -43,7 +43,8 @@ public struct FormCraft: MemberMacro {
            }
        }
 
-       let mapperString = propertyNames.map { "\"\($0)\": \\.\($0)" }.joined(separator: ", ")
+    let mapperString = propertyNames.map { "\"\($0)\": \\.\($0)" }.joined(separator: ", ")
+    let orderString = propertyNames.map { "\"\($0)\"" }.joined(separator: ", ")
 
        return [
            """
@@ -67,6 +68,12 @@ public struct FormCraft: MemberMacro {
 
                Self._formCraftAccessNamesCache = filtered
                return filtered
+           }
+
+           func getAccessOrder() -> [String] {
+               let accessNames = getAccessNames()
+               let ordered = [\(raw: orderString)]
+               return ordered.filter { accessNames[$0] != nil }
            }
            """
        ]

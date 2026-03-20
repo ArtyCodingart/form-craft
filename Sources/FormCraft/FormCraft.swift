@@ -1,6 +1,6 @@
 import SwiftUI
 
-@attached(member, names: named(getAccessNames), named(_formCraftAccessNamesCache))
+@attached(member, names: named(getAccessNames), named(getAccessOrder), named(_formCraftAccessNamesCache))
 public macro FormCraft() = #externalMacro(module: "FormCraftMacros", type: "FormCraft")
 
 @MainActor
@@ -9,7 +9,7 @@ public protocol FormCraftConfig: Observable, AnyObject {
     typealias Name = String
 
     var fields: Fields { get set }
-    var formState: FormCraftFormState { get set }
+    var formState: FormCraftFormState<Fields> { get set }
 
     func setErrors<each Field: FormCraftFieldConfigurable>(
         _ pairs: repeat (KeyPath<Fields, each Field>, FormCraftFailure)
@@ -20,16 +20,20 @@ public protocol FormCraftConfig: Observable, AnyObject {
     func setDefaultValues<each Field: FormCraftFieldConfigurable>(
         _ pairs: repeat (WritableKeyPath<Fields, each Field>, (each Field).Value)
     )
+    func setFocus<Field: FormCraftFieldConfigurable>(key: KeyPath<Fields, Field>?)
     func validateField<Field: FormCraftFieldConfigurable>(key: KeyPath<Fields, Field>) async -> Bool
     func validateFields() async -> Bool
     func handleSubmit(onSuccess: @escaping (_ data: FormCraftValidatedFields<Fields>) async -> Void) -> () -> Void
 }
 
-public struct FormCraftFormState {
+@Observable
+public final class FormCraftFormState<Fields> {
     public var isSubmitting: Bool
+    public var focusedFieldKey: PartialKeyPath<Fields>?
 
-    public init(isSubmitting: Bool) {
+    public init(isSubmitting: Bool, focusedFieldKey: PartialKeyPath<Fields>? = nil) {
         self.isSubmitting = isSubmitting
+        self.focusedFieldKey = focusedFieldKey
     }
 }
 
@@ -57,8 +61,9 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
     private var taskRefine: Task<FormCraftFailure?, Never>? = nil
 
     public var fields: Fields
-    public var formState = FormCraftFormState(
-        isSubmitting: false
+    public var formState = FormCraftFormState<Fields>(
+        isSubmitting: false,
+        focusedFieldKey: nil
     )
 
     public init(fields: Fields) {
@@ -101,11 +106,44 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         _ pairs: repeat (WritableKeyPath<Fields, each Field>, (each Field).Value)
     ) {
         func apply<F: FormCraftFieldConfigurable>(_ key: WritableKeyPath<Fields, F>, _ value: F.Value) {
+            fields[keyPath: key].errors = nil
             fields[keyPath: key].defaultValue = value
             fields[keyPath: key].isDirty = false
             fields[keyPath: key].value = value
         }
         repeat apply((each pairs).0, (each pairs).1)
+    }
+
+    public func setFocus<Field: FormCraftFieldConfigurable>(key: KeyPath<Fields, Field>?) {
+        if formState.focusedFieldKey == key {
+            return
+        }
+
+        formState.focusedFieldKey = key
+    }
+
+    private func focusFirstError() async {
+        formState.focusedFieldKey = nil
+
+        await Task.yield()
+
+        let order = fields.getAccessOrder()
+        let accessNames = fields.getAccessNames()
+
+        for name in order {
+            guard let keyPath = accessNames[name] else {
+                continue
+            }
+
+            let field = fields.getField(by: keyPath)
+            if field.mounted && field.errors != nil {
+                formState.focusedFieldKey = keyPath
+
+                return
+            }
+        }
+
+        formState.focusedFieldKey = nil
     }
 
     private func validateRefine() async -> [PartialKeyPath<Fields>: FormCraftFailure] {
@@ -227,6 +265,8 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
                 defer { self.formState.isSubmitting = false }
 
                 let isValid = await self.validateFields()
+
+                await focusFirstError()
 
                 guard isValid else { return }
 
