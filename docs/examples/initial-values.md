@@ -21,15 +21,16 @@ private struct PlayerService {
     }
 }
 
+@FormCraft
 private struct FormFields: FormCraftFields {
-    var firstName = FormCraftField(name: "firstName", value: "") { value in
+    var firstName = FormCraftField(value: "") { value in
         await FormCraftValidationRules()
             .string()
             .notEmpty()
             .validate(value: value)
     }
 
-    var lastName = FormCraftField(name: "lastName", value: "") { value in
+    var lastName = FormCraftField(value: "") { value in
         await FormCraftValidationRules()
             .string()
             .notEmpty()
@@ -38,23 +39,25 @@ private struct FormFields: FormCraftFields {
 }
 
 struct InitialValuesFormView: View {
-    @StateObject private var form = FormCraft(fields: FormFields())
+    @State private var form = FormCraft(fields: FormFields())
     private let playerService = PlayerService()
 
-    private func updatePlayer(fields: FormCraftValidatedFields<FormFields>) async {
-        await playerService.updatePlayer(player: .init(
-            firstName: fields.firstName,
-            lastName: fields.lastName
-        ))
+    private func updatePlayer(data: FormCraftValidatedFields<FormFields>) async {
+        await playerService.updatePlayer(
+            player: .init(
+                firstName: data.firstName,
+                lastName: data.lastName
+            )
+        )
     }
 
     func onTask() async {
         let data = await playerService.fetchPlayer()
 
-        form.setValues(values: [
-            \.firstName: data.firstName,
-            \.lastName: data.lastName
-        ])
+        form.setDefaultValues(
+            (\.firstName, data.firstName),
+            (\.lastName, data.lastName)
+        )
     }
 
     var body: some View {
@@ -66,8 +69,11 @@ struct InitialValuesFormView: View {
                 ) { value, field in
                     TextField("First name", text: value)
                         .textFieldStyle(.roundedBorder)
-                    Text(field.errors.first ?? "")
-                        .foregroundStyle(.red)
+
+                    if let firstError = field.errors?.messages.first {
+                        Text(firstError)
+                            .foregroundStyle(.red)
+                    }
                 }
 
                 FormCraftControllerView(
@@ -76,15 +82,18 @@ struct InitialValuesFormView: View {
                 ) { value, field in
                     TextField("Last name", text: value)
                         .textFieldStyle(.roundedBorder)
-                    Text(field.errors.first ?? "")
-                        .foregroundStyle(.red)
+
+                    if let firstError = field.errors?.messages.first {
+                        Text(firstError)
+                            .foregroundStyle(.red)
+                    }
                 }
             }
 
             Button("Update", action: form.handleSubmit(onSuccess: updatePlayer))
                 .disabled(form.formState.isSubmitting)
         }
-        .task(onTask)
+        .task { await onTask() }
     }
 }
 ```

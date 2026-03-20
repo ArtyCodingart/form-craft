@@ -4,8 +4,9 @@
 import SwiftUI
 import FormCraft
 
+@FormCraft
 private struct LoginFormFields: FormCraftFields {
-    var login = FormCraftField(name: "login", value: "") { value in
+    var login = FormCraftField(value: "") { value in
         await FormCraftValidationRules()
             .string()
             .trimmed()
@@ -14,7 +15,7 @@ private struct LoginFormFields: FormCraftFields {
             .validate(value: value)
     }
 
-    var password = FormCraftField(name: "password", value: "") { value in
+    var password = FormCraftField(value: "") { value in
         await FormCraftValidationRules()
             .string()
             .trimmed()
@@ -24,40 +25,48 @@ private struct LoginFormFields: FormCraftFields {
 }
 
 struct LoginFormView: View {
-    @StateObject private var loginForm = FormCraft(fields: LoginFormFields())
+    @State private var loginForm = FormCraft(fields: LoginFormFields())
 
     private func handleLogin(
-        fields: FormCraftValidatedFields<LoginFormFields>
+        data: FormCraftValidatedFields<LoginFormFields>
     ) async {
-        print(fields.login)
-        print(fields.password)
+        print(data.login)
+        print(data.password)
     }
 
     var body: some View {
-        FormCraftView(formConfig: loginForm) {
-            FormCraftControllerView(
-                formConfig: loginForm,
-                key: \.login
-            ) { value, field in
-                TextField("Email", text: value)
-                    .textFieldStyle(.roundedBorder)
-                Text(field.errors.first ?? "")
-                    .foregroundStyle(.red)
+        VStack(spacing: 12) {
+            FormCraftView(formConfig: loginForm) {
+                FormCraftControllerView(
+                    formConfig: loginForm,
+                    key: \.login
+                ) { value, field in
+                    TextField("Email", text: value)
+                        .textFieldStyle(.roundedBorder)
+
+                    if let firstError = field.errors?.messages.first {
+                        Text(firstError)
+                            .foregroundStyle(.red)
+                    }
+                }
+
+                FormCraftControllerView(
+                    formConfig: loginForm,
+                    key: \.password
+                ) { value, field in
+                    SecureField("Password", text: value)
+                        .textFieldStyle(.roundedBorder)
+
+                    if let firstError = field.errors?.messages.first {
+                        Text(firstError)
+                            .foregroundStyle(.red)
+                    }
+                }
             }
 
-            FormCraftControllerView(
-                formConfig: loginForm,
-                key: \.password
-            ) { value, field in
-                TextField("Email", text: value)
-                    .textFieldStyle(.roundedBorder)
-                Text(field.errors.first ?? "")
-                    .foregroundStyle(.red)
-            }
+            Button("Login", action: loginForm.handleSubmit(onSuccess: handleLogin))
+                .disabled(loginForm.formState.isSubmitting)
         }
-
-        Button("Login", action: loginForm.handleSubmit(onSuccess: handleLogin))
-            .disabled(loginForm.formState.isSubmitting)
     }
 }
 ```

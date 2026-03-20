@@ -1,7 +1,7 @@
-# FormCraft
-`FormCraft` - is the central class for working with forms in SwiftUI.
-It manages field values, performs their validation, handles errors, and controls the submission process.
-The main goal of `FormCraft` is to free the developer from routine: you define fields and rules, and the library automatically ensures data correctness and tracks the form state.
+# FormCraft <Badge type="tip" text="Class" />
+
+`FormCraft` is the main form controller in the library.
+It coordinates form state and validation, and provides the public API for working with a form.
 
 
 ## Constructor
@@ -11,54 +11,40 @@ init(fields: Fields)
 ```
 
 ### Arguments
-- **fields: Fields** - a structure of fields conforming to `FormCraftFields`. It describes all fields, their initial values, and validation rules.
+- **fields: Fields** - a structure of fields conforming to [`FormCraftFields`](/api/formCraftFields). It describes all fields, their initial values, and validation rules.
 
 ## Properties
 
-- **`fields: Fields`** - the current state of the form fields.  
+- **`fields: Fields`** - current form fields state (provided via `init(fields:)`).  
 
-- **`registeredFields: [String]`** - the list of registered field names. Used to track fields that actually participate in validation.  
-
-- **`focusedFields: [String]`** - the set of field names that are currently focused (for example, active text fields).  
-
-- **`errorFields: [String: String]`** - a dictionary of errors, where the key is the field name and the value is the error message.  
-
-- **`validationFields: [Key: Task<Void, Never>]`** - a dictionary of active validation tasks.  
-
-- **`validatedFields: [Key: Sendable]`** - a dictionary of successfully validated values.  
-
-- **`formState: FormCraftFormState`** - the overall form state.  
+- **`formState: FormCraftFormState<Fields>`** - overall form state.  
   Contains:  
 
-  | Property | Type   | Description |
-  |---|---|---|
-  | `isSubmitting` | `Bool` | Indicates whether the form is in the process of "submitting". Commonly used to disable the "Submit" button and show a loading indicator. |  
+  | Property | Type | Default | Description |
+  |---|---|---|---|
+  | `isSubmitting` | `Bool` | `false` | Indicates whether the submit flow is currently running. |
+  | `focusedFieldKey` | `PartialKeyPath<Fields>?` | `nil` | Key path of the field that should be focused, or `nil`. |
 
 ## Methods
 
-### Registration
-
-- **`registerField(key:name:)`** - adds a field to the list of tracked ones.  
-- **`unregisterField(key:)`** - removes a field from the list.  
-
----
-
 ### Setting values
 
-- **`setValue(key:value:config:)`** - changes the value of a single field.  
-  If `shouldValidate = true` is specified in `config`, the field is validated immediately.  
-
-- **`setValues(values:)`** - updates several fields at once.  
+- **`setDefaultValues(_ pairs: repeat (WritableKeyPath<Fields, Field>, Field.Value))`** - updates default and current values for provided fields.  
 
 ---
 
 ### Errors
 
-- **`setError(key:message:)`** - sets an error for a specific field.  
-- **`setErrors([String:String])`** - sets errors by field names.  
-- **`setErrors([Key:String])`** - sets errors by field keys.  
+- **`setErrors(_ pairs: repeat (KeyPath<Fields, Field>, FormCraftFailure))`** - sets errors by key paths.  
+- **`setErrors(errors: [String: [String]])`** - sets errors by field names.  
 - **`clearError(key:)`** - clears the error of a specific field.  
 - **`clearErrors()`** - clears all errors.  
+
+---
+
+### Focus
+
+- **`setFocus(key:)`** - sets or clears focused field key.
 
 ---
 
@@ -71,9 +57,31 @@ init(fields: Fields)
 
 ### Form submission
 
-- **`handleSubmit(onSuccess:)`** - returns a closure for the "Submit" button.  
-  When called:  
-  1. sets `isSubmitting = true`;  
-  2. validates all fields;  
-  3. if everything is ok - calls `onSuccess` with valid data;  
-  4. resets `isSubmitting = false`.  
+- **`handleSubmit(onSuccess:)`** - returns a closure intended for submit actions (for example, a button action).  
+  It validates form data and calls `onSuccess` only when the form is valid.
+
+Example:
+
+```swift
+@FormCraft
+private struct LoginFields: FormCraftFields {
+    var email = FormCraftField(value: "") { value in
+        await FormCraftValidationRules()
+            .string()
+            .notEmpty()
+            .email()
+            .validate(value: value)
+    }
+}
+
+@State private var form = FormCraft(fields: LoginFields())
+
+private func onSubmit(
+    data: FormCraftValidatedFields<LoginFields>
+) async {
+    // `data.email` is validated and typed
+    print(data.email)
+}
+
+Button("Submit", action: form.handleSubmit(onSuccess: onSubmit))
+```

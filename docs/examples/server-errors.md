@@ -38,15 +38,16 @@ private struct PlayerRepository {
     }
 }
 
+@FormCraft
 private struct FormFields: FormCraftFields {
-    var firstName = FormCraftField(name: "firstName", value: "") { value in
+    var firstName = FormCraftField(value: "") { value in
         await FormCraftValidationRules()
             .string()
             .notEmpty()
             .validate(value: value)
     }
 
-    var lastName = FormCraftField(name: "lastName", value: "") { value in
+    var lastName = FormCraftField(value: "") { value in
         await FormCraftValidationRules()
             .string()
             .notEmpty()
@@ -55,14 +56,16 @@ private struct FormFields: FormCraftFields {
 }
 
 struct ServerErrorsFormView: View {
-    @StateObject private var form = FormCraft(fields: FormFields())
+    @State private var form = FormCraft(fields: FormFields())
     private let playerService = PlayerRepository()
 
-    private func handleSubmit(fields: FormCraftValidatedFields<FormFields>) async {
-        let response = await playerService.updatePlayer(player: .init(
-            firstName: fields.firstName,
-            lastName: fields.lastName
-        ))
+    private func handleSubmit(data: FormCraftValidatedFields<FormFields>) async {
+        let response = await playerService.updatePlayer(
+            player: .init(
+                firstName: data.firstName,
+                lastName: data.lastName
+            )
+        )
 
         switch response {
         case .success:
@@ -74,10 +77,10 @@ struct ServerErrorsFormView: View {
 
     func onTask() async {
         let data = await playerService.fetchPlayer()
-        form.setValues(values: [
-            \.firstName: data.firstName,
-            \.lastName: data.lastName
-        ])
+        form.setDefaultValues(
+            (\.firstName, data.firstName),
+            (\.lastName, data.lastName)
+        )
     }
 
     var body: some View {
@@ -89,8 +92,11 @@ struct ServerErrorsFormView: View {
                 ) { value, field in
                     TextField("First name", text: value)
                         .textFieldStyle(.roundedBorder)
-                    Text(field.errors.first ?? "")
-                        .foregroundStyle(.red)
+
+                    if let firstError = field.errors?.messages.first {
+                        Text(firstError)
+                            .foregroundStyle(.red)
+                    }
                 }
 
                 FormCraftControllerView(
@@ -99,8 +105,11 @@ struct ServerErrorsFormView: View {
                 ) { value, field in
                     TextField("Last name", text: value)
                         .textFieldStyle(.roundedBorder)
-                    Text(field.errors.first ?? "")
-                        .foregroundStyle(.red)
+
+                    if let firstError = field.errors?.messages.first {
+                        Text(firstError)
+                            .foregroundStyle(.red)
+                    }
                 }
             }
 

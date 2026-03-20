@@ -1,17 +1,37 @@
-# FormCraftControllerView
-`FormCraftControllerView` - это SwiftUI-компонент для связывания элементов интерфейса с полями формы.  
+# FormCraftControllerView <Badge type="tip" text="Struct" />
+
+`FormCraftControllerView` binds a SwiftUI input control to a specific form field.
+
+It provides:
+- typed binding to field value (`Binding<Field.Value>`)
+- access to current field object (`Field`)
+- automatic mounted/focus synchronization
+- automatic per-field validation when value changes
 
 ## Constructor
 
 ```swift
-init<Field: FormCraftFieldConfigurable>(
-    form: FormCraft<Fields>,
-    keyPath: WritableKeyPath<Fields, Field>,
-    @ViewBuilder content: @escaping (Binding<Field.Value>, String?) -> Content
+init(
+    formConfig: FormConfig,
+    key: WritableKeyPath<FormConfig.Fields, FormField>,
+    @ViewBuilder content: @escaping (_ value: Binding<Value>, _ formField: FormField) -> Content
 )
 ```
 
 ### Arguments
-- **`form: FormCraft<Fields>`** - экземпляр формы, управляющий состоянием.  
-- **`keyPath: WritableKeyPath<Fields, Field>`** - ссылка на конкретное поле формы.  
-- **`content`** - вью-билдер, принимающий биндинг к значению поля и возможное сообщение об ошибке.  
+- **`formConfig: FormConfig`** - form configuration object.
+- **`key`** - key path to target field in `formConfig.fields`.
+- **`content`** - builder that receives value binding and field object.
+
+Example:
+
+```swift
+FormCraftControllerView(formConfig: form, key: \.email) { value, field in
+    TextField("Email", text: value)
+
+    if let firstError = field.errors?.messages.first {
+        Text(firstError)
+            .foregroundStyle(.red)
+    }
+}
+```

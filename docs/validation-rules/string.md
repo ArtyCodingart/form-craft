@@ -38,7 +38,7 @@ Minimum length requirement.
 
 **Parameters**
 - `min: Int` – minimum number of characters  
-- `message: LocalizedStringResource` – error message if shorter
+- `message: ((Int) -> LocalizedStringResource)?` – optional custom error message builder
 
 ```swift
 let minRule = FormCraftValidationRules()
@@ -55,7 +55,7 @@ Maximum length limit.
 
 **Parameters**
 - `max: Int` – maximum number of characters  
-- `message: LocalizedStringResource` – error message if longer
+- `message: ((Int) -> LocalizedStringResource)?` – optional custom error message builder
 
 ```swift
 let maxRule = FormCraftValidationRules()
@@ -72,7 +72,7 @@ Exact length requirement.
 
 **Parameters**
 - `length: Int` – required number of characters  
-- `message: LocalizedStringResource` – error message if length does not match
+- `message: ((Int) -> LocalizedStringResource)?` – optional custom error message builder
 
 ```swift
 let lengthRule = FormCraftValidationRules()
@@ -89,7 +89,7 @@ Value must be equal to the given string.
 
 **Parameters**
 - `to: String` – the string to compare against  
-- `message: LocalizedStringResource` – error message if values differ
+- `message: ((String, String) -> LocalizedStringResource)?` – optional custom error message builder
 
 ```swift
 let equalsRule = FormCraftValidationRules()
@@ -293,7 +293,7 @@ emailRule.validate(value: "user@example.com") // ✅ is valid
 emailRule.validate(value: "user@")            // ❌ is not valid
 ```
 
-## phoneNumber
+## e164phoneNumber
 
 E.164-like phone number validation.
 
@@ -324,4 +324,70 @@ let startsWithRule = FormCraftValidationRules()
 
 startsWithRule.validate(value: "Hello World") // ✅ is valid
 startsWithRule.validate(value: "World Hello") // ❌ is not valid
+```
+
+## endsWith
+
+Value must end with the given suffix.
+
+**Parameters**
+- `suffix: String` – required ending substring
+- `message: ((String) -> LocalizedStringResource)?` – optional custom error message builder
+
+```swift
+let endsWithRule = FormCraftValidationRules()
+  .string()
+  .endsWith(suffix: ".com")
+
+endsWithRule.validate(value: "example.com") // ✅ is valid
+endsWithRule.validate(value: "example.org") // ❌ is not valid
+```
+
+## includes
+
+Value must contain the given substring.
+
+**Parameters**
+- `substring: String` – required substring
+- `message: ((String) -> LocalizedStringResource)?` – optional custom error message builder
+
+```swift
+let includesRule = FormCraftValidationRules()
+  .string()
+  .includes(substring: "@")
+
+includesRule.validate(value: "name@example.com") // ✅ is valid
+includesRule.validate(value: "name.example.com") // ❌ is not valid
+```
+
+## uppercase
+
+Value must be fully uppercase.
+
+**Parameters**
+- `message: LocalizedStringResource` – error message if value is not uppercase
+
+```swift
+let uppercaseRule = FormCraftValidationRules()
+  .string()
+  .uppercase()
+
+uppercaseRule.validate(value: "ABC") // ✅ is valid
+uppercaseRule.validate(value: "AbC") // ❌ is not valid
+```
+
+## lowercase
+
+Value must be fully lowercase.
+
+**Parameters**
+- `message: LocalizedStringResource` – error message if value is not lowercase
+
+```swift
+let lowercaseRule = FormCraftValidationRules()
+  .string()
+  .lowercase()
+
+lowercaseRule.validate(value: "abc") // ✅ is valid
+lowercaseRule.validate(value: "aBc") // ❌ is not valid
 ```

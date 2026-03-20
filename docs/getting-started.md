@@ -2,7 +2,7 @@
 
 ## Installation
 
-FormCraft is distributed via Swift Package Manager.
+FormCraft is distributed via Swift Package Manager (SPM).
 
 Supported platforms:
 - iOS 17+
@@ -30,13 +30,18 @@ dependencies: [
 
 ## First Form
 
+This example shows the full happy path:
+- define typed fields
+- bind them to SwiftUI controls
+- submit only validated data
+
 ```swift
 import SwiftUI
 import FormCraft
 
 @FormCraft
 private struct LoginFields: FormCraftFields {
-    var email = FormCraftField(value: "", delayValidation: .fast) { value in
+    var email = FormCraftField(value: "") { value in
         await FormCraftValidationRules()
             .string()
             .trimmed()
@@ -61,33 +66,33 @@ struct LoginFormView: View {
     var body: some View {
         VStack(spacing: 12) {
             FormCraftView(formConfig: form) {
-                FormCraftControllerView(formConfig: form, key: \.email) { value in
+                FormCraftControllerView(formConfig: form, key: \.email) { value, field in
                     TextField("Email", text: value)
                         .textFieldStyle(.roundedBorder)
+
+                    if let firstError = field.errors?.messages.first {
+                        Text(firstError)
+                            .foregroundStyle(.red)
+                    }
                 }
 
-                if let firstError = form.fields.email.errors?.errors.first {
-                    Text(firstError)
-                        .foregroundStyle(.red)
-                }
-
-                FormCraftControllerView(formConfig: form, key: \.password) { value in
+                FormCraftControllerView(formConfig: form, key: \.password) { value, field in
                     SecureField("Password", text: value)
                         .textFieldStyle(.roundedBorder)
-                }
 
-                if let firstError = form.fields.password.errors?.errors.first {
-                    Text(firstError)
-                        .foregroundStyle(.red)
+                    if let firstError = field.errors?.messages.first {
+                        Text(firstError)
+                            .foregroundStyle(.red)
+                    }
                 }
             }
 
             Button(
                 "Login",
-                action: form.handleSubmit { fields in
-                    // fields.email and fields.password are validated values
-                    print(fields.email)
-                    print(fields.password)
+                action: form.handleSubmit { data in
+                    // `data` contains typed validated values.
+                    print(data.email)
+                    print(data.password)
                 }
             )
             .disabled(form.formState.isSubmitting)
@@ -96,9 +101,3 @@ struct LoginFormView: View {
     }
 }
 ```
-
-## Next Steps
-
-- Learn the built-in validators in `overview.md`
-- Add cross-field checks with `refine(form:)`
-- Customize error messages with `FormCraftLocalizations`

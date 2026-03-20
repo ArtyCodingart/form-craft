@@ -15,35 +15,33 @@ private func checkExistEmail(email: String) async -> Bool {
         "user123@mydomain.co"
     ]
 
-    if existingEmails.contains(email) {
-        return false
-    }
-
-    return true
+    return !existingEmails.contains(email)
 }
 
+@FormCraft
 private struct LoginFormFields: FormCraftFields {
-    var login = FormCraftField(name: "login", value: "") { value in
-        let validateResult = await FormCraftValidationRules()
+    var login = FormCraftField(value: "") { value in
+        let validationResult = await FormCraftValidationRules()
             .string()
             .trimmed()
             .notEmpty()
             .email()
             .validate(value: value)
 
-        if case .failure = validateResult {
-            return validateResult
+        guard case .success(let validatedEmail) = validationResult else {
+            return validationResult
         }
 
-        let isValidEmail = await checkExistEmail(email: value)
+        let isValidEmail = await checkExistEmail(email: validatedEmail)
 
         if isValidEmail {
-            return .success(value: value)
+            return .success(value: validatedEmail)
         }
+
         return .failure(errors: .init(["Email already exists"]))
     }
 
-    var password = FormCraftField(name: "password", value: "") { value in
+    var password = FormCraftField(value: "") { value in
         await FormCraftValidationRules()
             .string()
             .trimmed()
@@ -53,41 +51,52 @@ private struct LoginFormFields: FormCraftFields {
 }
 
 struct ServerValidationFormView: View {
-    @StateObject private var loginForm = FormCraft(fields: LoginFormFields())
+    @State private var loginForm = FormCraft(fields: LoginFormFields())
 
     private func handleLogin(
-        fields: FormCraftValidatedFields<LoginFormFields>
+        data: FormCraftValidatedFields<LoginFormFields>
     ) async {
-        print(fields.login)
-        print(fields.password)
+        print(data.login)
+        print(data.password)
     }
 
     var body: some View {
-        FormCraftView(formConfig: loginForm) {
-            FormCraftControllerView(
-                formConfig: loginForm,
-                key: \.login
-            ) { value, field in
-                TextField("Email", text: value)
-                    .textFieldStyle(.roundedBorder)
-                Text(field.errors.first ?? "")
-                    .foregroundStyle(.red)
-                Text("Is validating: \(String(field.isValidating))")
+        VStack(spacing: 12) {
+            FormCraftView(formConfig: loginForm) {
+                FormCraftControllerView(
+                    formConfig: loginForm,
+                    key: \.login
+                ) { value, field in
+                    TextField("Email", text: value)
+                        .textFieldStyle(.roundedBorder)
+
+                    if let firstError = field.errors?.messages.first {
+                        Text(firstError)
+                            .foregroundStyle(.red)
+                    }
+
+                    Text("Is validating: \(String(field.isValidation))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                FormCraftControllerView(
+                    formConfig: loginForm,
+                    key: \.password
+                ) { value, field in
+                    SecureField("Password", text: value)
+                        .textFieldStyle(.roundedBorder)
+
+                    if let firstError = field.errors?.messages.first {
+                        Text(firstError)
+                            .foregroundStyle(.red)
+                    }
+                }
             }
 
-            FormCraftControllerView(
-                formConfig: loginForm,
-                key: \.password
-            ) { value, field in
-                TextField("Email", text: value)
-                    .textFieldStyle(.roundedBorder)
-                Text(field.errors.first ?? "")
-                    .foregroundStyle(.red)
-            }
+            Button("Login", action: loginForm.handleSubmit(onSuccess: handleLogin))
+                .disabled(loginForm.formState.isSubmitting)
         }
-
-        Button("Login", action: loginForm.handleSubmit(onSuccess: handleLogin))
-            .disabled(loginForm.formState.isSubmitting)
     }
 }
 ```

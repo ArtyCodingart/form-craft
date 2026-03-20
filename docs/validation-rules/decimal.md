@@ -6,7 +6,7 @@ Strictly greater than the specified number.
 
 **Parameters**
 - `num: Decimal` – exclusive lower bound  
-- `message: LocalizedStringResource` – error message if the value is not greater
+- `message: ((Decimal) -> LocalizedStringResource)?` – optional custom error message builder
 
 ```swift
 let greaterThan = FormCraftValidationRules()
@@ -23,7 +23,7 @@ Greater than or equal to the specified number.
 
 **Parameters**
 - `num: Decimal` – inclusive lower bound  
-- `message: LocalizedStringResource` – error message if the value is less
+- `message: ((Decimal) -> LocalizedStringResource)?` – optional custom error message builder
 
 ```swift
 let greaterOrEqual = FormCraftValidationRules()
@@ -40,7 +40,7 @@ Strictly less than the specified number.
 
 **Parameters**
 - `num: Decimal` – exclusive upper bound  
-- `message: LocalizedStringResource` – error message if the value is not less
+- `message: ((Decimal) -> LocalizedStringResource)?` – optional custom error message builder
 
 ```swift
 let lessThan = FormCraftValidationRules()
@@ -138,7 +138,7 @@ Even divisibility by the specified multiplier.
 
 **Parameters**
 - `mult: Decimal` – multiplier (divisor). If zero, validation fails  
-- `message: LocalizedStringResource` – error message if the value is not a multiple
+- `message: ((Decimal) -> LocalizedStringResource)?` – optional custom error message builder
 
 ```swift
 let multipleOf = FormCraftValidationRules()

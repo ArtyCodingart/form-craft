@@ -1,16 +1,27 @@
-# FormCraftView
-`FormCraftView` - это SwiftUI-компонент для отображения и управления формой.  
-Он принимает экземпляр `FormCraft` и с помощью `@ViewBuilder` позволяет описать, как должны выглядеть поля и элементы управления.  
+# FormCraftView <Badge type="tip" text="Struct" />
+
+`FormCraftView` is a lightweight container for form content.
+It accepts a form config object and renders custom SwiftUI layout.
 
 ## Constructor
 
 ```swift
-init<Content: View>(
-    form: FormCraft<Fields>,
-    @ViewBuilder content: @escaping (FormCraft<Fields>) -> Content
+init(
+    formConfig: FormConfig,
+    @ViewBuilder content: () -> Content
 )
 ```
 
 ### Arguments
-- **`form: FormCraft<Fields>`** - экземпляр формы, управляющий состоянием.  
-- **`content`** - вью-билдер, который принимает форму и возвращает её разметку.  
+- **`formConfig: FormConfig`** - form configuration object (`FormCraft` or custom type conforming to `FormCraftConfig`).
+- **`content`** - form content builder.
+
+Example:
+
+```swift
+FormCraftView(formConfig: form) {
+    FormCraftControllerView(formConfig: form, key: \.email) { value, _ in
+        TextField("Email", text: value)
+    }
+}
+```
