@@ -60,7 +60,7 @@ public protocol FormCraftFieldConfigurable: Observable, AnyObject, Sendable {
     func validate() async -> FormCraftFailure?
 }
 
-public enum FormCraftValidationResponse<Value: Sendable> {
+public enum FormCraftValidationResponse<Value: Sendable>: Sendable {
     case success(value: Value)
     case failure(errors: FormCraftFailure)
 

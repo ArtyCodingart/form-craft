@@ -119,5 +119,5 @@ public struct FormCraftLocalizations {
 }
 
 private func l10n(_ key: String.LocalizationValue) -> LocalizedStringResource {
-    LocalizedStringResource(key, bundle: .module)
+    LocalizedStringResource(key, bundle: .atURL(Bundle.module.bundleURL))
 }
