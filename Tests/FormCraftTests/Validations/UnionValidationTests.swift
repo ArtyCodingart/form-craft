@@ -36,7 +36,7 @@ struct FormCraftUnionValidationTests {
         case .success:
             Issue.record("Expected failure")
         case .failure(let errors):
-            #expect(!errors.messages.isEmpty)
+            #expect(errors.messages.count == 2)
         }
     }
 }

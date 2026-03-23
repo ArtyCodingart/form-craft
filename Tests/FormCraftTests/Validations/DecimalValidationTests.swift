@@ -60,4 +60,53 @@ struct FormCraftDecimalValidationTests {
         await assertValidationFailure(rules.decimal().positive(), value: 0.0)
         await assertValidationFailure(rules.decimal().positive(), value: -1.0)
     }
+
+    // MARK: - nonNegative
+    @Test("nonNegative: succeeds for value >= 0")
+    func nonNegativeSuccess() async {
+        await assertValidationSuccess(rules.decimal().nonNegative(), value: 0.0)
+        await assertValidationSuccess(rules.decimal().nonNegative(), value: 1.0)
+    }
+    @Test("nonNegative: fails for value < 0")
+    func nonNegativeFailure() async {
+        await assertValidationFailure(rules.decimal().nonNegative(), value: -0.1)
+    }
+
+    // MARK: - negative
+    @Test("negative: succeeds for value < 0")
+    func negativeSuccess() async {
+        await assertValidationSuccess(rules.decimal().negative(), value: -0.1)
+    }
+    @Test("negative: fails for value >= 0")
+    func negativeFailure() async {
+        await assertValidationFailure(rules.decimal().negative(), value: 0.0)
+        await assertValidationFailure(rules.decimal().negative(), value: 1.0)
+    }
+
+    // MARK: - nonPositive
+    @Test("nonPositive: succeeds for value <= 0")
+    func nonPositiveSuccess() async {
+        await assertValidationSuccess(rules.decimal().nonPositive(), value: 0.0)
+        await assertValidationSuccess(rules.decimal().nonPositive(), value: -1.0)
+    }
+    @Test("nonPositive: fails for value > 0")
+    func nonPositiveFailure() async {
+        await assertValidationFailure(rules.decimal().nonPositive(), value: 0.1)
+    }
+
+    // MARK: - multipleOf
+    @Test("multipleOf: succeeds for values divisible by multiplier")
+    func multipleOfSuccess() async {
+        await assertValidationSuccess(rules.decimal().multipleOf(mult: 0.1), value: 0.3)
+        await assertValidationSuccess(rules.decimal().multipleOf(mult: 2), value: 10)
+    }
+    @Test("multipleOf: fails for non-divisible values")
+    func multipleOfFailure() async {
+        await assertValidationFailure(rules.decimal().multipleOf(mult: 0.1), value: 0.31)
+        await assertValidationFailure(rules.decimal().multipleOf(mult: 2), value: 3)
+    }
+    @Test("multipleOf: fails for zero multiplier")
+    func multipleOfZeroFailure() async {
+        await assertValidationFailure(rules.decimal().multipleOf(mult: 0), value: 1)
+    }
 }
