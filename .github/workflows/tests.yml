@@ -16,5 +16,4 @@ jobs:
         with:
           xcode-version: '26.1.1'
       - run: swift --version
-      # Workaround for intermittent heap crashes in CI ("freed pointer was not the last allocation").
-      - run: swift test --no-parallel
+      - run: swift test
