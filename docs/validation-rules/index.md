@@ -16,6 +16,8 @@ await FormCraftValidationRules()
   .validate(value: "test@gmail.com")
 ```
 
+For cases where input can be one of several shapes, use [`union`](/validation-rules/union).
+
 ::: info RULE EXECUTION ORDER
 Rules run in order.
 If any rule fails, remaining rules are not executed.

@@ -47,6 +47,7 @@ export default defineConfig({
           { text: 'Boolean', link: '/validation-rules/boolean'},
           { text: 'Integer', link: '/validation-rules/integer' },
           { text: 'Decimal', link: '/validation-rules/decimal' },
+          { text: 'Union', link: '/validation-rules/union' },
         ]
       },
       {
