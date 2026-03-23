@@ -15,4 +15,5 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '16.4'
-      - run: swift test
+      # Workaround for intermittent heap crashes in CI ("freed pointer was not the last allocation").
+      - run: swift test --no-parallel
