@@ -11,6 +11,23 @@ If no validators match, it returns `.failure` with combined errors from all atte
 - `value: Any` - raw value to validate
 - `rules: repeat each Rule` - variadic validators conforming to `FormCraftValidationTypeRules`
 
+**Signature**
+
+```swift
+func union<each Rule: FormCraftValidationTypeRules>(
+  _ value: Any,
+  _ rules: repeat each Rule
+) async -> FormCraftValidationResponse<(repeat ((each Rule).Value)?)>
+```
+
+For two rules (`string`, `integer`), success type is inferred as:
+
+```swift
+FormCraftValidationResponse<(String?, Int?)>
+```
+
+### Example: first rule matches
+
 ```swift
 let result = await FormCraftValidationRules().union(
   "hello@example.com",
@@ -19,17 +36,21 @@ let result = await FormCraftValidationRules().union(
 )
 
 switch result {
-case .success(let tuple):
-  let email = tuple.0
-  let intValue = tuple.1
-  print(email as Any)    // Optional("hello@example.com")
-  print(intValue as Any) // nil
+case .success(let (email, intValue)):
+  if let email {
+    print("Email:", email)
+  }
+
+  // `intValue` is `Int?` and will be `nil` here.
+  if let intValue {
+    print("Int:", intValue)
+  }
 case .failure(let errors):
   print(errors.messages)
 }
 ```
 
-### Another example
+### Example: second rule matches
 
 ```swift
 let result = await FormCraftValidationRules().union(
@@ -39,9 +60,15 @@ let result = await FormCraftValidationRules().union(
 )
 
 switch result {
-case .success(let tuple):
-  print(tuple.0 as Any) // nil
-  print(tuple.1 as Any) // Optional(42)
+case .success(let (stringValue, intValue)):
+  // `stringValue` is `String?` and will be `nil` here.
+  if let stringValue {
+    print("String:", stringValue)
+  }
+
+  if let intValue {
+    print("Int:", intValue) // 42
+  }
 case .failure(let errors):
   print(errors.messages)
 }
