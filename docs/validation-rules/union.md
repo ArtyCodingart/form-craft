@@ -1,11 +1,21 @@
 # Union
 
+Use union validation when one input value can match different validator types.
+
 ## union
 
-Validates a raw value against multiple validators and succeeds when at least one rule matches.
+`union` validates one raw value against multiple validators and succeeds when at least one validator passes.
 
-On success, `union` returns a tuple of optional values where only the matched validator position is non-`nil`.
-If no validators match, it returns `.failure` with combined errors from all attempted validators.
+Internally, each validator is executed with `validate(raw:)`.
+
+On success, `union` returns a tuple of optional values:
+- each tuple position corresponds to the validator at the same position in arguments
+- position is non-`nil` when that validator passed
+- position is `nil` when that validator failed
+
+Important: more than one position can be non-`nil` if multiple validators accept the same input.
+
+If no validators pass, `union` returns `.failure` with merged errors from all validators.
 
 **Parameters**
 - `value: Any` - raw value to validate
@@ -26,7 +36,7 @@ For two rules (`string`, `integer`), success type is inferred as:
 FormCraftValidationResponse<(String?, Int?)>
 ```
 
-### Example: first rule matches
+### Example: first rule passes
 
 ```swift
 let result = await FormCraftValidationRules().union(
@@ -50,7 +60,7 @@ case .failure(let errors):
 }
 ```
 
-### Example: second rule matches
+### Example: second rule passes
 
 ```swift
 let result = await FormCraftValidationRules().union(
@@ -69,6 +79,25 @@ case .success(let (stringValue, intValue)):
   if let intValue {
     print("Int:", intValue) // 42
   }
+case .failure(let errors):
+  print(errors.messages)
+}
+```
+
+### Example: multiple rules pass
+
+```swift
+let result = await FormCraftValidationRules().union(
+  "42",
+  FormCraftValidationRules().string().notEmpty(),
+  FormCraftValidationRules().string().regex(/^\d+$/)
+)
+
+switch result {
+case .success(let (raw, digitsOnly)):
+  // Both are non-nil because both validators passed.
+  print(raw ?? "")
+  print(digitsOnly ?? "")
 case .failure(let errors):
   print(errors.messages)
 }

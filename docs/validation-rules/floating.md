@@ -1,8 +1,11 @@
 # Floating
 
-`floating()` validates `Float` by default.
+Use floating validation for numeric fields that can contain fractional values (`Float`, `Double`, etc.).
 
+::: warning Type Defaults
+By default it uses `Float`.  
 Use `floating(Double.self)` (or another floating-point type) when you need explicit type control.
+:::
 
 ## gt
 
@@ -77,7 +80,7 @@ lessOrEqual.validate(value: 101) // ❌ is not valid
 Positive number (greater than zero).
 
 **Parameters**
-- `message: LocalizedStringResource` - error message if the value is not positive
+- `message: LocalizedStringResource?` - error message if the value is not positive
 
 ```swift
 let positive = FormCraftValidationRules()
@@ -93,7 +96,7 @@ positive.validate(value: -10)  // ❌ is not valid
 Zero or positive.
 
 **Parameters**
-- `message: LocalizedStringResource` - error message if the value is negative
+- `message: LocalizedStringResource?` - error message if the value is negative
 
 ```swift
 let nonNegative = FormCraftValidationRules()
@@ -109,7 +112,7 @@ nonNegative.validate(value: -1)  // ❌ is not valid
 Negative number (less than zero).
 
 **Parameters**
-- `message: LocalizedStringResource` - error message if the value is not negative
+- `message: LocalizedStringResource?` - error message if the value is not negative
 
 ```swift
 let negative = FormCraftValidationRules()
@@ -125,7 +128,7 @@ negative.validate(value: 5)  // ❌ is not valid
 Zero or negative.
 
 **Parameters**
-- `message: LocalizedStringResource` - error message if the value is positive
+- `message: LocalizedStringResource?` - error message if the value is positive
 
 ```swift
 let nonPositive = FormCraftValidationRules()
@@ -139,6 +142,7 @@ nonPositive.validate(value: 10) // ❌ is not valid
 ## multipleOf
 
 Checks that the value is a multiple of the specified divisor.
+For floating-point numbers, comparison uses tolerance to reduce precision issues.
 
 **Parameters**
 - `num: T` - divisor. If zero, validation fails

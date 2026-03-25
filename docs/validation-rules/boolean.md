@@ -1,5 +1,7 @@
 # Boolean
 
+Use boolean validation for fields that should contain only `true` or `false`.
+
 ## checked
 
 Value must be `true`.  

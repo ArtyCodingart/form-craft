@@ -14,8 +14,8 @@ public extension FormCraftValidationRules {
     ///   - value: The untyped (raw) value to validate.
     ///   - rules: A variadic list of validators to attempt.
     /// - Returns: A `FormCraftValidationResponse` that is either:
-    ///   - `.success` with a tuple of optional validated values (exactly one element is non-`nil` on success), or
-    ///   - `.error` with the last encountered error message if none of the validators accept the value.
+    ///   - `.success` with a tuple of optional validated values (one or more elements may be non-`nil`), or
+    ///   - `.failure` with merged error messages if none of the validators accept the value.
     func union<
         each Rule: FormCraftValidationTypeRules
     >(

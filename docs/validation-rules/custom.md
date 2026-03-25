@@ -1,20 +1,21 @@
 # Custom
 
-Use `custom()` / `custom(T.self)` when built-in validators (`string`, `integer`, `floating`, `decimal`, `boolean`) are not enough.
+Use custom validation when field value is not a simple scalar and you need domain-specific validation logic.
 
-## Why use it
+Use it for domain objects and custom value types that are not covered by built-in validators.
+
+## Why Use It
 
 - To validate domain models (`User`, `Address`, `Money`, etc.).
-- To validate arrays and complex nested payloads.
 - To support external value types that are not built into FormCraft.
 
 ## When to use it
 
-- Cross-field/domain-specific checks inside one value object.
-- Business rules that cannot be expressed by built-in scalar rules.
-- Validation for custom wrappers and third-party types.
+- When one value contains multiple properties and should be validated as a whole object.
+- When business rules cannot be expressed by built-in scalar rules.
+- When you want to keep domain validation close to the domain type.
 
-## Example
+## Basic Example
 
 ```swift
 struct User: Sendable {
@@ -42,7 +43,9 @@ let userValidation = FormCraftValidationRules()
 let result = await userValidation.validate(value: .init(firstName: "Alex", age: 21))
 ```
 
-## Using `FormCraftValidationRules` inside `addRule`
+## Reusing Built-In Rules Inside `addRule`
+
+You can call `FormCraftValidationRules` inside `addRule` and map nested validation errors back to the current custom value.
 
 ```swift
 struct User: Sendable {
@@ -78,10 +81,3 @@ let validator = FormCraftValidationRules()
     return .success(value: user)
   }
 ```
-
-## Notes
-
-- `T` must conform to `Sendable`.
-- Rules are executed in order.
-- Validation stops on the first failure.
-- Use `.custom(MyType.self)` when you want explicit type.

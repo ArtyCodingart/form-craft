@@ -1,16 +1,19 @@
 # Integer
 
-`integer()` validates `Int` by default.
+Use integer validation for numeric fields that must contain whole numbers (`Int`, `Int64`, `UInt`, etc.).
 
+::: warning Type Defaults
+By default it uses `Int`.  
 Use `integer(Int64.self)` (or another integer type) when you need explicit type control.
+:::
 
 ## gt
 
 Strictly greater than the specified number.
 
 **Parameters**
-- `num: Int` – exclusive lower bound  
-- `message: ((Int) -> LocalizedStringResource)?` – optional custom error message builder
+- `num: T` - exclusive lower bound
+- `message: ((T) -> LocalizedStringResource)?` - optional custom error message builder
 
 ```swift
 let greaterThan = FormCraftValidationRules()
@@ -26,8 +29,8 @@ greaterThan.validate(value: 5)  // ❌ is not valid
 Greater than or equal to the specified number.
 
 **Parameters**
-- `num: Int` – inclusive lower bound  
-- `message: ((Int) -> LocalizedStringResource)?` – optional custom error message builder
+- `num: T` - inclusive lower bound
+- `message: ((T) -> LocalizedStringResource)?` - optional custom error message builder
 
 ```swift
 let greaterOrEqual = FormCraftValidationRules()
@@ -43,8 +46,8 @@ greaterOrEqual.validate(value: 5)  // ❌ is not valid
 Strictly less than the specified number.
 
 **Parameters**
-- `num: Int` – exclusive upper bound  
-- `message: ((Int) -> LocalizedStringResource)?` – optional custom error message builder
+- `num: T` - exclusive upper bound
+- `message: ((T) -> LocalizedStringResource)?` - optional custom error message builder
 
 ```swift
 let lessThan = FormCraftValidationRules()
@@ -60,8 +63,8 @@ lessThan.validate(value: 150)  // ❌ is not valid
 Less than or equal to the specified number.
 
 **Parameters**
-- `num: Int` – inclusive upper bound  
-- `message: ((Int) -> LocalizedStringResource)?` – optional custom error message builder
+- `num: T` - inclusive upper bound
+- `message: ((T) -> LocalizedStringResource)?` - optional custom error message builder
 
 ```swift
 let lessOrEqual = FormCraftValidationRules()
@@ -77,7 +80,7 @@ lessOrEqual.validate(value: 101) // ❌ is not valid
 Positive number (greater than zero).
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if the value is not positive
+- `message: LocalizedStringResource?` - error message if the value is not positive
 
 ```swift
 let positive = FormCraftValidationRules()
@@ -93,7 +96,7 @@ positive.validate(value: -10)  // ❌ is not valid
 Zero or positive.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if the value is negative
+- `message: LocalizedStringResource?` - error message if the value is negative
 
 ```swift
 let nonNegative = FormCraftValidationRules()
@@ -109,7 +112,7 @@ nonNegative.validate(value: -1)  // ❌ is not valid
 Negative number (less than zero).
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if the value is not negative
+- `message: LocalizedStringResource?` - error message if the value is not negative
 
 ```swift
 let negative = FormCraftValidationRules()
@@ -125,7 +128,7 @@ negative.validate(value: 5)  // ❌ is not valid
 Zero or negative.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if the value is positive
+- `message: LocalizedStringResource?` - error message if the value is positive
 
 ```swift
 let nonPositive = FormCraftValidationRules()
@@ -138,11 +141,11 @@ nonPositive.validate(value: 10) // ❌ is not valid
 
 ## multipleOf
 
-Even divisibility by the specified number.
+Checks that the value is divisible by the specified number.
 
 **Parameters**
-- `num: Int` – divisor. If zero, validation fails  
-- `message: ((Int) -> LocalizedStringResource)?` – optional custom error message builder
+- `num: T` - divisor. If zero, validation fails
+- `message: ((T) -> LocalizedStringResource)?` - optional custom error message builder
 
 ```swift
 let multipleOf = FormCraftValidationRules()

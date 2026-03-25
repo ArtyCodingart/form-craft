@@ -1,5 +1,9 @@
 # String
 
+`string()` validates text values.
+
+Use string rules for common inputs like emails, phone numbers, IDs, IPs, and custom regex patterns.
+
 ## notEmpty
 
 Value must not be an empty string.

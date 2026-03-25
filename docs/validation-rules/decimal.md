@@ -1,12 +1,14 @@
 # Decimal
 
+Use decimal validation when you need base-10 precision (for example money and amounts) and want to avoid binary floating-point rounding effects.
+
 ## gt
 
 Strictly greater than the specified number.
 
 **Parameters**
-- `num: Decimal` – exclusive lower bound  
-- `message: ((Decimal) -> LocalizedStringResource)?` – optional custom error message builder
+- `num: Decimal` - exclusive lower bound
+- `message: ((Decimal) -> LocalizedStringResource)?` - optional custom error message builder
 
 ```swift
 let greaterThan = FormCraftValidationRules()
@@ -22,8 +24,8 @@ greaterThan.validate(value: 5)  // ❌ is not valid
 Greater than or equal to the specified number.
 
 **Parameters**
-- `num: Decimal` – inclusive lower bound  
-- `message: ((Decimal) -> LocalizedStringResource)?` – optional custom error message builder
+- `num: Decimal` - inclusive lower bound
+- `message: ((Decimal) -> LocalizedStringResource)?` - optional custom error message builder
 
 ```swift
 let greaterOrEqual = FormCraftValidationRules()
@@ -39,8 +41,8 @@ greaterOrEqual.validate(value: 5)  // ❌ is not valid
 Strictly less than the specified number.
 
 **Parameters**
-- `num: Decimal` – exclusive upper bound  
-- `message: ((Decimal) -> LocalizedStringResource)?` – optional custom error message builder
+- `num: Decimal` - exclusive upper bound
+- `message: ((Decimal) -> LocalizedStringResource)?` - optional custom error message builder
 
 ```swift
 let lessThan = FormCraftValidationRules()
@@ -56,8 +58,8 @@ lessThan.validate(value: 150)  // ❌ is not valid
 Less than or equal to the specified number.
 
 **Parameters**
-- `num: Decimal` – inclusive upper bound  
-- `message: LocalizedStringResource` – error message if the value is greater
+- `num: Decimal` - inclusive upper bound
+- `message: LocalizedStringResource?` - error message if the value is greater
 
 ```swift
 let lessOrEqual = FormCraftValidationRules()
@@ -73,7 +75,7 @@ lessOrEqual.validate(value: 101) // ❌ is not valid
 Positive number (greater than zero).
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if the value is not positive
+- `message: LocalizedStringResource?` - error message if the value is not positive
 
 ```swift
 let positive = FormCraftValidationRules()
@@ -89,7 +91,7 @@ positive.validate(value: -10)  // ❌ is not valid
 Zero or positive.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if the value is negative
+- `message: LocalizedStringResource?` - error message if the value is negative
 
 ```swift
 let nonNegative = FormCraftValidationRules()
@@ -105,7 +107,7 @@ nonNegative.validate(value: -1)  // ❌ is not valid
 Negative number (less than zero).
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if the value is not negative
+- `message: LocalizedStringResource?` - error message if the value is not negative
 
 ```swift
 let negative = FormCraftValidationRules()
@@ -121,7 +123,7 @@ negative.validate(value: 5)  // ❌ is not valid
 Zero or negative.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if the value is positive
+- `message: LocalizedStringResource?` - error message if the value is positive
 
 ```swift
 let nonPositive = FormCraftValidationRules()
@@ -134,11 +136,11 @@ nonPositive.validate(value: 10) // ❌ is not valid
 
 ## multipleOf
 
-Even divisibility by the specified multiplier.
+Checks that the value is divisible by the specified multiplier.
 
 **Parameters**
-- `mult: Decimal` – multiplier (divisor). If zero, validation fails  
-- `message: ((Decimal) -> LocalizedStringResource)?` – optional custom error message builder
+- `mult: Decimal` - multiplier (divisor). If zero, validation fails
+- `message: ((Decimal) -> LocalizedStringResource)?` - optional custom error message builder
 
 ```swift
 let multipleOf = FormCraftValidationRules()
