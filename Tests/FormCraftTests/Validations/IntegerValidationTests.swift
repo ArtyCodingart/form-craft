@@ -5,6 +5,23 @@ import Testing
 struct FormCraftIntegerValidationTests {
     let rules = FormCraftValidationRules()
 
+    @Test("integer(type): supports explicit integer type")
+    func explicitIntegerType() async {
+        let validator = rules.integer(Int64.self).gte(num: 5)
+
+        await assertValidationSuccess(validator, value: 5)
+        await assertValidationFailure(validator, value: 4)
+    }
+
+    @Test("integer(type): supports unsigned integer type for applicable rules")
+    func explicitUnsignedIntegerType() async {
+        let validator = rules.integer(UInt.self).positive().multipleOf(num: 2)
+
+        await assertValidationSuccess(validator, value: 2)
+        await assertValidationFailure(validator, value: 0)
+        await assertValidationFailure(validator, value: 3)
+    }
+
     // MARK: - gt
     @Test("gt: succeeds when value > num")
     func gtSuccess() async {

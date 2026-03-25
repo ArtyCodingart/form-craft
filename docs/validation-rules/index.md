@@ -5,7 +5,7 @@
 FormCraft includes built-in validation rules out of the box.
 You can also define your own custom rules when needed.
 
-FormCraft provides `FormCraftValidationRules` with rule builders like `.string()`, `.integer()`, `.boolean()`, and others.
+FormCraft provides `FormCraftValidationRules` with rule builders like `.string()`, `.integer()`, `.floating()`, `.boolean()`, and others.
 
 ```swift
 await FormCraftValidationRules()
@@ -39,7 +39,7 @@ func validate(value: Value) async -> FormCraftValidationResponse<Value>
 ```
 
 `Value` is inferred from the rule type.
-For example, `.string()` gives `String`, `.integer()` gives `Int`, etc.
+For example, `.string()` gives `String`, `.integer()` gives `Int`, `.floating()` gives `Float`, etc.
 
 Use `validate(raw:)` when you have an untyped value at runtime.
 Use `validate(value:)` when value type is already known.

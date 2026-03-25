@@ -1,24 +1,24 @@
 import Foundation
 
 public extension FormCraftValidationRules {
-    /// Creates a validation builder for `Int` values.
+    /// Creates a validation builder for `Float` values.
     ///
-    /// - Returns: An integer validation builder for chaining rules.
-    func integer() -> FormCraftIntegerValidation<Int> {
+    /// - Returns: A floating-point validation builder for chaining rules.
+    func floating() -> FormCraftFloatingValidation<Float> {
         .init()
     }
 
-    /// Creates a validation builder for a specific integer type.
+    /// Creates a validation builder for a specific floating-point type.
     ///
-    /// - Parameter type: The integer type to validate (for example, `Int64.self`).
-    /// - Returns: An integer validation builder for chaining rules.
-    func integer<T: BinaryInteger & Sendable>(_ type: T.Type) -> FormCraftIntegerValidation<T> {
+    /// - Parameter type: The floating-point type to validate (for example, `Double.self`).
+    /// - Returns: A floating-point validation builder for chaining rules.
+    func floating<T: BinaryFloatingPoint & Sendable>(_ type: T.Type) -> FormCraftFloatingValidation<T> {
         .init()
     }
 }
 
-/// A validation builder for integer values that supports composing multiple rules.
-public struct FormCraftIntegerValidation<T: BinaryInteger & Sendable>: FormCraftValidationTypeRules {
+/// A validation builder for floating-point values that supports composing multiple rules.
+public struct FormCraftFloatingValidation<T: BinaryFloatingPoint & Sendable>: FormCraftValidationTypeRules {
     public var rules: [(_ value: T) async -> FormCraftValidationResponse<T>] = []
 
     /// Validates that the value is strictly greater than the specified number.
@@ -119,7 +119,7 @@ public struct FormCraftIntegerValidation<T: BinaryInteger & Sendable>: FormCraft
     /// - Returns: The validation builder for chaining.
     public func nonNegative(
         message: LocalizedStringResource? = nil
-    ) -> Self where T: SignedInteger {
+    ) -> Self {
         addRule { value in
             if value < 0 {
                 return .failure(errors: .init([message ?? localizations.nonNegative]))
@@ -135,7 +135,7 @@ public struct FormCraftIntegerValidation<T: BinaryInteger & Sendable>: FormCraft
     /// - Returns: The validation builder for chaining.
     public func negative(
         message: LocalizedStringResource? = nil
-    ) -> Self where T: SignedInteger {
+    ) -> Self {
         addRule { value in
             if value >= 0 {
                 return .failure(errors: .init([message ?? localizations.negative]))
@@ -151,7 +151,7 @@ public struct FormCraftIntegerValidation<T: BinaryInteger & Sendable>: FormCraft
     /// - Returns: The validation builder for chaining.
     public func nonPositive(
         message: LocalizedStringResource? = nil
-    ) -> Self where T: SignedInteger {
+    ) -> Self {
         addRule { value in
             if value > 0 {
                 return .failure(errors: .init([message ?? localizations.nonPositive]))
@@ -161,7 +161,7 @@ public struct FormCraftIntegerValidation<T: BinaryInteger & Sendable>: FormCraft
         }
     }
 
-    /// Validates that the value is evenly divisible by the specified number.
+    /// Validates that the value is a multiple of the specified number.
     ///
     /// - Parameters:
     ///   - num: The divisor. If zero, validation fails.
@@ -172,8 +172,19 @@ public struct FormCraftIntegerValidation<T: BinaryInteger & Sendable>: FormCraft
         message: ((T) -> LocalizedStringResource)? = nil
     ) -> Self {
         addRule { value in
-            if num == 0 || value % num != 0 {
-                return .failure(errors: .init([message?(num) ?? localizations.multipleOf(String(describing: num))]))
+            let errorMessage = message?(num) ?? localizations.multipleOf(String(describing: num))
+
+            guard num != 0 else {
+                return .failure(errors: .init([errorMessage]))
+            }
+
+            let remainder = value.truncatingRemainder(dividingBy: num)
+            let divisorAbs = abs(num)
+            let remainderAbs = abs(remainder)
+            let tolerance = max(divisorAbs * T.ulpOfOne * 8, T.ulpOfOne * 8)
+
+            if remainderAbs > tolerance && abs(divisorAbs - remainderAbs) > tolerance {
+                return .failure(errors: .init([errorMessage]))
             }
 
             return .success(value: value)
