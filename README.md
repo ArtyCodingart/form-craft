@@ -1,5 +1,7 @@
 # Form Craft
 
+![FormCraft](docs/public/form-craft-start-logo.png)
+
 ![GitHub Release](https://img.shields.io/github/v/release/ArtyCodingart/form-craft?color=%239a60fe)
 ![Static Badge](https://img.shields.io/badge/iOS-17%2B-test?logo=apple)
 ![GitHub License](https://img.shields.io/github/license/ArtyCodingart/form-craft)
