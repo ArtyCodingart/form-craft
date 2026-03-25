@@ -6,7 +6,7 @@ FormCraft is distributed via Swift Package Manager (SPM).
 
 Supported platforms:
 - iOS 17+
-- macOS 13+
+- macOS 14+
 
 ### Add with Xcode
 
