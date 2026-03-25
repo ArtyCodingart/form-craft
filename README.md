@@ -13,12 +13,12 @@ Build better forms with a simple and flexible validation library for Swift and S
 
 ## Key Features
 
-- 💜 Modern Swift / iOS 17+
-- ☂️ Typed validated submit data
-- 🔀 Async-ready validation flow
-- 🔨 Extendable validation rules
-- 🧩 Field-level + cross-field validation (`refine`)
-- 🕑 Built-in validation delay (`delayValidation`)
+- 🚀 **Faster Time to Release**: Launch form-heavy flows faster without compromising quality.
+- ✅ **Trusted Results**: Turn raw input into clean, reliable data for your business logic.
+- ⚡️ **Smooth Performance**: Keep forms fast and responsive even as validation logic grows.
+- 🧩 **Built to Scale**: Start simple and grow into complex product flows without rewriting from scratch.
+- 🔌 **Easy Adoption**: Integrate into existing SwiftUI screens and improve forms incrementally.
+- ❤️ **Consistent User Experience**: Give users clear feedback, predictable validation behavior, and smoother form completion.
 
 ## Basic example
 
