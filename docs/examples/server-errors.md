@@ -71,7 +71,7 @@ struct ServerErrorsFormView: View {
         case .success:
             print("Profile updated.")
         case .failure(let serverError):
-            form.setErrors(serverError.errors)
+            form.setErrors(errors: serverError.errors)
         }
     }
 

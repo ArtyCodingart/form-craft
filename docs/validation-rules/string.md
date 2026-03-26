@@ -9,7 +9,7 @@ Use string rules for common inputs like emails, phone numbers, IDs, IPs, and cus
 Value must not be an empty string.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if empty
+- `message: LocalizedStringResource?` – optional custom error message if empty
 
 ```swift
 let notEmpty = FormCraftValidationRules()
@@ -25,7 +25,7 @@ notEmpty.validate(value: "")     // ❌ is not valid
 No leading or trailing whitespace is allowed.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if whitespace is found
+- `message: LocalizedStringResource?` – optional custom error message if whitespace is found
 
 ```swift
 let trimmed = FormCraftValidationRules()
@@ -110,7 +110,7 @@ Validation against a custom regex pattern.
 
 **Parameters**
 - `pattern: Regex<Substring>` – regex to validate against  
-- `message: LocalizedStringResource` – error message if pattern does not match
+- `message: LocalizedStringResource?` – optional custom error message if pattern does not match
 
 ```swift
 let code4Digits = FormCraftValidationRules()
@@ -126,7 +126,7 @@ code4Digits.validate(value: "12a4") // ❌ is not valid
 Value must be a valid CUID.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if invalid
+- `message: LocalizedStringResource?` – optional custom error message if invalid
 
 ```swift
 let cuidRule = FormCraftValidationRules()
@@ -142,7 +142,7 @@ cuidRule.validate(value: "invalid-cuid")              // ❌ is not valid
 Value must be a valid CUID2.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if invalid
+- `message: LocalizedStringResource?` – optional custom error message if invalid
 
 ```swift
 let cuid2Rule = FormCraftValidationRules()
@@ -158,7 +158,7 @@ cuid2Rule.validate(value: "A1B2C3")       // ❌ is not valid
 Value must be a valid ULID.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if invalid
+- `message: LocalizedStringResource?` – optional custom error message if invalid
 
 ```swift
 let ulidRule = FormCraftValidationRules()
@@ -174,7 +174,7 @@ ulidRule.validate(value: "01ARZ3NDEKTSV4RRFFQ69G5FA!") // ❌ is not valid
 Value must be a valid UUID.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if invalid
+- `message: LocalizedStringResource?` – optional custom error message if invalid
 
 ```swift
 let uuidRule = FormCraftValidationRules()
@@ -190,7 +190,7 @@ uuidRule.validate(value: "invalid-uuid")                        // ❌ is not va
 Value must be a valid NanoID (21 chars).
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if invalid
+- `message: LocalizedStringResource?` – optional custom error message if invalid
 
 ```swift
 let nanoIdRule = FormCraftValidationRules()
@@ -206,7 +206,7 @@ nanoIdRule.validate(value: "ABC-123")                // ❌ is not valid
 IPv4 address format validation.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if invalid
+- `message: LocalizedStringResource?` – optional custom error message if invalid
 
 ```swift
 let ipv4Rule = FormCraftValidationRules()
@@ -222,7 +222,7 @@ ipv4Rule.validate(value: "999.168.0.1") // ❌ is not valid
 IPv6 address format validation.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if invalid
+- `message: LocalizedStringResource?` – optional custom error message if invalid
 
 ```swift
 let ipv6Rule = FormCraftValidationRules()
@@ -238,7 +238,7 @@ ipv6Rule.validate(value: "2001:::7334")                            // ❌ is not
 IPv4 CIDR notation validation.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if invalid
+- `message: LocalizedStringResource?` – optional custom error message if invalid
 
 ```swift
 let cidrv4Rule = FormCraftValidationRules()
@@ -254,7 +254,7 @@ cidrv4Rule.validate(value: "192.168.1.0/33") // ❌ is not valid
 IPv6 CIDR notation validation.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if invalid
+- `message: LocalizedStringResource?` – optional custom error message if invalid
 
 ```swift
 let cidrv6Rule = FormCraftValidationRules()
@@ -270,7 +270,7 @@ cidrv6Rule.validate(value: "2001:db8::/129") // ❌ is not valid
 Date string in the format `YYYY-MM-DD` (leap-year aware).
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if invalid
+- `message: LocalizedStringResource?` – optional custom error message if invalid
 
 ```swift
 let isoDateRule = FormCraftValidationRules()
@@ -286,7 +286,7 @@ isoDateRule.validate(value: "2023-02-29") // ❌ is not valid
 Email format validation.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if invalid
+- `message: LocalizedStringResource?` – optional custom error message if invalid
 
 ```swift
 let emailRule = FormCraftValidationRules()
@@ -302,7 +302,7 @@ emailRule.validate(value: "user@")            // ❌ is not valid
 E.164-like phone number validation.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if invalid
+- `message: LocalizedStringResource?` – optional custom error message if invalid
 
 ```swift
 let phoneRule = FormCraftValidationRules()
@@ -369,7 +369,7 @@ includesRule.validate(value: "name.example.com") // ❌ is not valid
 Value must be fully uppercase.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if value is not uppercase
+- `message: LocalizedStringResource?` – optional custom error message if value is not uppercase
 
 ```swift
 let uppercaseRule = FormCraftValidationRules()
@@ -385,7 +385,7 @@ uppercaseRule.validate(value: "AbC") // ❌ is not valid
 Value must be fully lowercase.
 
 **Parameters**
-- `message: LocalizedStringResource` – error message if value is not lowercase
+- `message: LocalizedStringResource?` – optional custom error message if value is not lowercase
 
 ```swift
 let lowercaseRule = FormCraftValidationRules()

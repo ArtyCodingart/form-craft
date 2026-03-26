@@ -36,7 +36,7 @@ init(fields: Fields)
 ### Errors
 
 - **`setErrors(_ pairs: repeat (KeyPath<Fields, Field>, FormCraftFailure))`** - sets errors by key paths.  
-- **`setErrors(_ errors: [String: [String]])`** - sets errors by field names.  
+- **`setErrors(errors: [String: [String]])`** - sets errors by field names.  
   Supports nested field keys when you use [`FormCraftGroup`](/api/formCraftGroup), for example: `"delivery.zipCode"` or `"customer.email"`.
 - **`clearError(key:)`** - clears the error of a specific field.  
 - **`clearErrors()`** - clears all errors.  

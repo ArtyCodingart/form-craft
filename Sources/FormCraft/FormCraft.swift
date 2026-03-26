@@ -14,7 +14,7 @@ public protocol FormCraftConfig: Observable, AnyObject {
     func setErrors<each Field: FormCraftFieldConfigurable>(
         _ pairs: repeat (KeyPath<Fields, each Field>, FormCraftFailure)
     )
-    func setErrors(_ errors: [Name: [String]])
+    func setErrors(errors: [Name: [String]])
     func clearError<Field: FormCraftFieldConfigurable>(key: KeyPath<Fields, Field>)
     func clearErrors()
     func setDefaultValues<each Field: FormCraftFieldConfigurable>(
@@ -86,7 +86,7 @@ public final class FormCraft<Fields: FormCraftFields>: FormCraftConfig {
         repeat apply((each pairs).0, (each pairs).1)
     }
 
-    public func setErrors(_ errors: [String: [String]]) {
+    public func setErrors(errors: [String: [String]]) {
         errors.forEach { error in
             guard let fieldKey = fields.getAccessNames()[error.key] else {
                 return
