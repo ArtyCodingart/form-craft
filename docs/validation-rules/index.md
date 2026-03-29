@@ -41,8 +41,8 @@ func validate(value: Value) async -> FormCraftValidationResponse<Value>
 `Value` is inferred from the rule type.
 For example, `.string()` gives `String`, `.integer()` gives `Int`, `.floating()` gives `Float`, etc.
 
-Use `validate(raw:)` when you have an untyped value at runtime.
-Use `validate(value:)` when value type is already known.
+Use `validate(raw: Any?)` when you have an untyped value at runtime.
+Use `validate(value: Value)` when value type is already known.
 
 `validate` returns `FormCraftValidationResponse<Value>`:
 - `.success(value: Value)` — validation passed

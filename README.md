@@ -91,7 +91,6 @@ struct LoginFormView: View {
         }
     }
 }
-```
 
 ## CHANGELOG
 

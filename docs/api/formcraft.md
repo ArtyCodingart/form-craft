@@ -7,15 +7,24 @@ It coordinates form state and validation, and provides the public API for workin
 ## Constructor
 
 ```swift
-init(fields: Fields)
+init(
+  fields: Fields,
+  options: FormCraftOptions = .init()
+)
 ```
 
 ### Arguments
 - **fields: Fields** - a structure of fields conforming to [`FormCraftFields`](/api/formCraftFields). It describes all fields, their initial values, and validation rules.
+- **options: FormCraftOptions** - global form behavior options.
+
+  | Property | Type | Default | Description |
+  |---|---|---|---|
+  | `shouldFocusError` | `Bool` | `true` | Enables automatic focus on the first mounted field that currently has validation errors. |
 
 ## Properties
 
-- **`fields: Fields`** - current form fields state (provided via `init(fields:)`).  
+- **`fields: Fields`** - current form fields state (provided via `init(fields: Fields, options: FormCraftOptions)`).  
+- **`options: FormCraftOptions`** - global options used by the form controller.  
 
 - **`formState: FormCraftFormState<Fields>`** - overall form state.  
   Contains:  
@@ -35,30 +44,30 @@ init(fields: Fields)
 
 ### Errors
 
-- **`setErrors(_ pairs: repeat (KeyPath<Fields, Field>, FormCraftFailure))`** - sets errors by key paths.  
-- **`setErrors(errors: [String: [String]])`** - sets errors by field names.  
+- **`setErrors(_ pairs: repeat (KeyPath<Fields, Field>, FormCraftFailure), options: FormCraftSetErrorsOptions = .init())`** - sets errors by key paths.  
+- **`setErrors(errors: [String: [String]], options: FormCraftSetErrorsOptions = .init())`** - sets errors by field names.  
   Supports nested field keys when you use [`FormCraftGroup`](/api/formCraftGroup), for example: `"delivery.zipCode"` or `"customer.email"`.
-- **`clearError(key:)`** - clears the error of a specific field.  
+- **`clearError<Field: FormCraftFieldConfigurable>(key: KeyPath<Fields, Field>)`** - clears the error of a specific field.  
 - **`clearErrors()`** - clears all errors.  
 
 ---
 
 ### Focus
 
-- **`setFocus(key:)`** - sets or clears focused field key.
+- **`setFocus<Field: FormCraftFieldConfigurable>(key: KeyPath<Fields, Field>?)`** - sets or clears focused field key.
 
 ---
 
 ### Validation
 
-- **`validateField(key:)`** - asynchronously validates a single field.  
+- **`validateField<Field: FormCraftFieldConfigurable>(key: KeyPath<Fields, Field>) async -> Bool`** - asynchronously validates a single field.  
 - **`validateFields()`** - validates all fields and returns `true` if there are no errors.  
 
 ---
 
 ### Form submission
 
-- **`handleSubmit(onSuccess:)`** - returns a closure intended for submit actions (for example, a button action).  
+- **`handleSubmit(onSuccess: @escaping (_ data: FormCraftValidatedFields<Fields>) async -> Void) -> () -> Void`** - returns a closure intended for submit actions (for example, a button action).  
   It validates form data and calls `onSuccess` only when the form is valid.
 
 Example:
@@ -85,4 +94,3 @@ private func onSubmit(
 }
 
 Button("Submit", action: form.handleSubmit(onSuccess: onSubmit))
-```

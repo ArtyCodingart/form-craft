@@ -6,7 +6,7 @@ Use union validation when one input value can match different validator types.
 
 `union` validates one raw value against multiple validators and succeeds when at least one validator passes.
 
-Internally, each validator is executed with `validate(raw:)`.
+Internally, each validator is executed with `validate(raw: Any?)`.
 
 On success, `union` returns a tuple of optional values:
 - each tuple position corresponds to the validator at the same position in arguments
